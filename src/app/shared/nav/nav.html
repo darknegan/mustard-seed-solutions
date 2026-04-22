@@ -1,0 +1,55 @@
+<header class="nav" [class.is-open]="mobileOpen()">
+  <div class="mss-container nav__inner">
+    <a class="nav__brand" href="/" aria-label="Mustard Seed Solutions — Home">
+      <span class="nav__mark" aria-hidden="true">
+        <img class="nav__mark-logo" src="/mustard-seed-glyph-logo.svg" alt="" />
+      </span>
+      <span class="nav__wordmark">
+        <span class="nav__wordmark-top">Mustard Seed</span>
+        <span class="nav__wordmark-bottom">Solutions</span>
+      </span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      @for (link of links; track link.href) {
+        <a class="nav__link" [href]="link.href" (click)="closeMobile()">{{ link.label }}</a>
+      }
+    </nav>
+
+    <div class="nav__cta">
+      <a class="nav__link nav__link--ghost" href="/#contact">Free consult</a>
+      <p-button
+        label="Start a project"
+        styleClass="mss-btn-primary"
+        [rounded]="true"
+        (onClick)="closeMobile()"
+      />
+    </div>
+
+    <button
+      type="button"
+      class="nav__menu-btn"
+      [attr.aria-expanded]="mobileOpen()"
+      aria-controls="mobile-links"
+      aria-label="Toggle navigation"
+      (click)="toggleMobile()"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <div id="mobile-links" class="nav__mobile" [class.is-open]="mobileOpen()">
+    @for (link of links; track link.href) {
+      <a class="nav__mobile-link" [href]="link.href" (click)="closeMobile()">{{ link.label }}</a>
+    }
+    <a class="nav__mobile-link" href="/#contact" (click)="closeMobile()">Free consult</a>
+    <p-button
+      label="Start a project"
+      styleClass="mss-btn-primary"
+      [rounded]="true"
+      (onClick)="closeMobile()"
+    />
+  </div>
+</header>

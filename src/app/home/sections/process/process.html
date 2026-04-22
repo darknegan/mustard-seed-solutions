@@ -1,0 +1,178 @@
+<section
+  id="process"
+  class="process mss-section mss-section--base"
+  aria-labelledby="process-heading"
+>
+  <div class="process__bg" aria-hidden="true">
+    <div class="process__bg-grid"></div>
+    <div class="process__bg-glow process__bg-glow--a"></div>
+    <div class="process__bg-glow process__bg-glow--b"></div>
+  </div>
+
+  <div class="mss-container">
+    <header class="process__header">
+      <span class="mss-eyebrow mss-eyebrow--orange">The process</span>
+      <h2 id="process-heading" class="mss-display-lg">
+        Six calm steps. Every deliverable in writing.
+      </h2>
+      <p class="mss-body-lg mss-text-secondary process__lede">
+        The biggest reason small businesses hate their web vendor? Surprises. So we do the opposite.
+        Every step below has a <strong>named deliverable</strong>, a <strong>clear timeline</strong>,
+        and a <strong>defined handoff</strong>. You always know where we are, and what comes next.
+      </p>
+
+      <dl class="process__stats">
+        <div class="process__stat">
+          <dt class="process__stat-value">6</dt>
+          <dd class="process__stat-label">Phases · every one documented</dd>
+        </div>
+        <div class="process__stat">
+          <dt class="process__stat-value">14-56d</dt>
+          <dd class="process__stat-label">Typical kickoff → launch window</dd>
+        </div>
+        <div class="process__stat">
+          <dt class="process__stat-value">0</dt>
+          <dd class="process__stat-label">Surprise change-orders · ever</dd>
+        </div>
+        <div class="process__stat">
+          <dt class="process__stat-value">90d</dt>
+          <dd class="process__stat-label">Post-launch warranty on us</dd>
+        </div>
+      </dl>
+    </header>
+
+    <ol class="process__timeline">
+      <div class="process__rail" aria-hidden="true"></div>
+
+      @for (step of steps; track step.number; let i = $index; let last = $last) {
+        <li
+          class="pstep"
+          [attr.data-accent]="step.accent"
+          [class.pstep--right]="i % 2 === 1"
+        >
+          <div class="pstep__anchor" aria-hidden="true">
+            <span class="pstep__anchor-ring"></span>
+            <span class="pstep__anchor-dot"></span>
+          </div>
+
+          <div class="pstep__card">
+            <div class="pstep__head">
+              <div class="pstep__number" aria-hidden="true">
+                <i [class]="step.icon"></i>
+                <span>{{ step.number }}</span>
+              </div>
+              <div class="pstep__head-text">
+                <h3 class="pstep__title mss-h2">{{ step.title }}</h3>
+                <p class="pstep__kicker mss-body-sm">{{ step.kicker }}</p>
+              </div>
+              <p-tag
+                [value]="step.duration"
+                styleClass="pstep__duration"
+                [rounded]="true"
+              />
+            </div>
+
+            <p class="pstep__summary mss-body mss-text-secondary">{{ step.summary }}</p>
+
+            <div class="pstep__body">
+              <div class="pstep__deliverables">
+                <div class="pstep__section-label">
+                  <i class="pi pi-check-square" aria-hidden="true"></i> Deliverables
+                </div>
+                <ul class="pstep__list">
+                  @for (d of step.deliverables; track d) {
+                    <li class="pstep__list-item">
+                      <span class="pstep__bullet" aria-hidden="true"></span>
+                      <span>{{ d }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+
+              <div class="pstep__artifact" aria-hidden="true">
+                <div class="pstep__artifact-head">
+                  <span class="pstep__artifact-dots">
+                    <span></span><span></span><span></span>
+                  </span>
+                  <span class="pstep__artifact-label">{{ step.artifact.label }}</span>
+                </div>
+                <div class="pstep__artifact-body">
+                  @for (line of step.artifact.lines; track line) {
+                    <div class="pstep__artifact-line">{{ line }}</div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="pstep__roles">
+              <div class="pstep__role">
+                <div class="pstep__role-label">Your job</div>
+                <p class="pstep__role-text">{{ step.yourJob }}</p>
+              </div>
+              <div class="pstep__role-divider" aria-hidden="true"></div>
+              <div class="pstep__role">
+                <div class="pstep__role-label">My job</div>
+                <p class="pstep__role-text">{{ step.myJob }}</p>
+              </div>
+            </div>
+          </div>
+
+          @if (!last) {
+            <div class="pstep__connector" aria-hidden="true">
+              <svg viewBox="0 0 24 80" preserveAspectRatio="none">
+                <path d="M12 0 L12 80" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 6" fill="none" />
+                <circle class="pstep__connector-dot" cx="12" cy="0" r="3" />
+              </svg>
+            </div>
+          }
+        </li>
+      }
+    </ol>
+
+    <div class="process__principles" aria-label="Principles behind the process">
+      <div class="process__principles-head">
+        <span class="mss-eyebrow">What holds it together</span>
+        <h3 class="mss-h1">Principles we never compromise on.</h3>
+      </div>
+      <div class="process__principles-grid">
+        @for (p of principles; track p.title) {
+          <article class="principle">
+            <div class="principle__icon" aria-hidden="true">
+              <i [class]="p.icon"></i>
+            </div>
+            <h4 class="principle__title mss-h4">{{ p.title }}</h4>
+            <p class="principle__description mss-body-sm mss-text-secondary">
+              {{ p.description }}
+            </p>
+          </article>
+        }
+      </div>
+    </div>
+
+    <div class="process__cta">
+      <div class="process__cta-text">
+        <h3 class="mss-h2">See the process in action — on <em>your</em> business.</h3>
+        <p class="mss-body mss-text-secondary">
+          Book a free 20-min discovery call. We&rsquo;ll walk through your goals, your current site,
+          and where this process could get you in 30-60 days. No pitch, no pressure.
+        </p>
+      </div>
+      <div class="process__cta-actions">
+        <p-button
+          label="Book a discovery call"
+          icon="pi pi-calendar"
+          iconPos="left"
+          size="large"
+          styleClass="mss-btn-primary"
+          [rounded]="true"
+        />
+        <a
+          routerLink="/solutions"
+          class="p-button p-component p-button-lg mss-btn-ghost"
+        >
+          See solutions &amp; pricing
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

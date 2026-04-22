@@ -1,0 +1,274 @@
+<section
+  id="solutions"
+  class="solutions mss-section mss-section--surface"
+  aria-labelledby="solutions-heading"
+>
+  <div class="solutions__bg" aria-hidden="true">
+    <div class="solutions__bg-glow solutions__bg-glow--a"></div>
+    <div class="solutions__bg-glow solutions__bg-glow--b"></div>
+  </div>
+
+  <div class="mss-container">
+    <header class="solutions__header">
+      <span class="mss-eyebrow">Solutions · Build &amp; Care</span>
+      <h2 id="solutions-heading" class="mss-display-lg">
+        One studio. Two ways we grow your business online.
+      </h2>
+      <p class="mss-body-lg mss-text-secondary solutions__lede">
+        Start with a fixed-scope <strong>build</strong> that ships a credible, conversion-ready site —
+        then keep it sharp with a <strong>care plan</strong> that treats your website like the
+        revenue-producing asset it is.
+      </p>
+
+      <div class="solutions__toggle" role="tablist" aria-label="Solution type">
+        <button
+          type="button"
+          role="tab"
+          class="solutions__toggle-btn"
+          [class.is-active]="isBuild()"
+          [attr.aria-selected]="isBuild()"
+          (click)="setMode('build')"
+        >
+          <i class="pi pi-rocket" aria-hidden="true"></i>
+          <span class="solutions__toggle-top">Build packages</span>
+          <span class="solutions__toggle-sub">One-time · fixed scope</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="solutions__toggle-btn"
+          [class.is-active]="!isBuild()"
+          [attr.aria-selected]="!isBuild()"
+          (click)="setMode('care')"
+        >
+          <i class="pi pi-heart" aria-hidden="true"></i>
+          <span class="solutions__toggle-top">Care plans</span>
+          <span class="solutions__toggle-sub">Monthly · month-to-month</span>
+        </button>
+        <span class="solutions__toggle-pill" [class.is-right]="!isBuild()" aria-hidden="true"></span>
+      </div>
+    </header>
+
+    @if (isBuild()) {
+      <div class="solutions__grid" role="tabpanel" aria-label="Build packages">
+        @for (pkg of packages; track pkg.id) {
+          <article
+            class="tier tier--build"
+            [class.tier--featured]="pkg.featured"
+            [attr.data-accent]="pkg.accent"
+            [attr.aria-labelledby]="'tier-' + pkg.id + '-title'"
+          >
+            @if (pkg.featured) {
+              <p-tag value="Most chosen" severity="warn" styleClass="tier__badge" />
+            }
+
+            <div class="tier__head">
+              <div class="tier__icon" aria-hidden="true">
+                <i class="pi pi-box"></i>
+              </div>
+              <h3 [id]="'tier-' + pkg.id + '-title'" class="tier__name mss-h2">{{ pkg.name }}</h3>
+              <p class="tier__tagline mss-body mss-text-secondary">{{ pkg.tagline }}</p>
+            </div>
+
+            <div class="tier__price-row">
+              <span class="tier__price">{{ pkg.price }}</span>
+              <span class="tier__price-note">{{ pkg.priceNote }}</span>
+            </div>
+
+            <div class="tier__meta">
+              <div class="tier__meta-item">
+                <span class="tier__meta-label">Ideal for</span>
+                <span class="tier__meta-value">{{ pkg.idealFor }}</span>
+              </div>
+              <div class="tier__meta-item">
+                <span class="tier__meta-label">Timeline</span>
+                <span class="tier__meta-value">{{ pkg.timeline }}</span>
+              </div>
+            </div>
+
+            <div class="tier__highlights">
+              @for (h of pkg.highlights; track h) {
+                <span class="tier__chip">
+                  <i class="pi pi-check-circle" aria-hidden="true"></i>
+                  {{ h }}
+                </span>
+              }
+            </div>
+
+            <div class="tier__divider" aria-hidden="true"></div>
+
+            <div class="tier__deliverables">
+              <div class="tier__deliverables-title">What you get</div>
+              <ul class="tier__feature-list">
+                @for (feature of pkg.deliverables; track feature) {
+                  <li class="tier__feature">
+                    <span class="tier__feature-check" aria-hidden="true">
+                      <i class="pi pi-check"></i>
+                    </span>
+                    <span>{{ feature }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+
+            <div class="tier__cta">
+              <p-button
+                [label]="pkg.cta"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                [styleClass]="pkg.featured ? 'mss-btn-primary' : 'mss-btn-ghost'"
+                [rounded]="true"
+              />
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="solutions__tech" aria-label="Included with every build">
+        <div class="solutions__tech-head">
+          <span class="mss-eyebrow">Every build includes</span>
+          <h3 class="mss-h2">Built the way the web should be built.</h3>
+        </div>
+        <div class="solutions__tech-grid">
+          @for (pillar of techPillars; track pillar.title) {
+            <div class="pillar">
+              <div class="pillar__icon" aria-hidden="true">
+                <i [class]="pillar.icon"></i>
+              </div>
+              <h4 class="pillar__title mss-h4">{{ pillar.title }}</h4>
+              <p class="pillar__description mss-body-sm mss-text-secondary">
+                {{ pillar.description }}
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="solutions__addons" aria-label="Optional add-ons">
+        <div class="solutions__addons-head">
+          <span class="mss-eyebrow mss-eyebrow--orange">Add-ons · A la carte</span>
+          <h3 class="mss-h2">Stack on exactly what you need.</h3>
+          <p class="mss-body mss-text-secondary">
+            Pick and choose — we&rsquo;ll quote it cleanly alongside your package.
+          </p>
+        </div>
+        <div class="solutions__addons-grid">
+          @for (addon of addOns; track addon.name) {
+            <div class="addon">
+              <div class="addon__icon" aria-hidden="true">
+                <i [class]="addon.icon"></i>
+              </div>
+              <div class="addon__body">
+                <div class="addon__row">
+                  <h4 class="addon__name">{{ addon.name }}</h4>
+                  <span class="addon__price">{{ addon.price }}</span>
+                </div>
+                <p class="addon__summary mss-body-sm mss-text-secondary">{{ addon.summary }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <div class="solutions__grid" role="tabpanel" aria-label="Care plans">
+        @for (plan of carePlans; track plan.id) {
+          <article
+            class="tier tier--care"
+            [class.tier--featured]="plan.recommended"
+            [attr.data-accent]="plan.accent"
+            [attr.aria-labelledby]="'plan-' + plan.id + '-title'"
+          >
+            @if (plan.recommended) {
+              <p-tag value="Recommended" styleClass="tier__badge tier__badge--sky" />
+            }
+
+            <div class="tier__head">
+              <div class="tier__icon" aria-hidden="true">
+                <i class="pi pi-shield"></i>
+              </div>
+              <h3 [id]="'plan-' + plan.id + '-title'" class="tier__name mss-h2">{{ plan.name }}</h3>
+              <p class="tier__tagline mss-body mss-text-secondary">{{ plan.summary }}</p>
+            </div>
+
+            <div class="tier__price-row">
+              <span class="tier__price">{{ plan.price }}</span>
+              <span class="tier__price-note">{{ plan.priceNote }}</span>
+            </div>
+
+            <div class="tier__meta">
+              <div class="tier__meta-item">
+                <span class="tier__meta-label">Included work</span>
+                <span class="tier__meta-value">{{ plan.includedHours }}</span>
+              </div>
+              <div class="tier__meta-item">
+                <span class="tier__meta-label">SLA</span>
+                <span class="tier__meta-value">{{ plan.responseTime }}</span>
+              </div>
+            </div>
+
+            <div class="tier__divider" aria-hidden="true"></div>
+
+            <div class="tier__deliverables">
+              <div class="tier__deliverables-title">What&rsquo;s covered</div>
+              <ul class="tier__feature-list">
+                @for (feature of plan.features; track feature) {
+                  <li class="tier__feature">
+                    <span class="tier__feature-check" aria-hidden="true">
+                      <i class="pi pi-check"></i>
+                    </span>
+                    <span>{{ feature }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+
+            <div class="tier__cta">
+              <p-button
+                [label]="plan.cta"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                [styleClass]="plan.recommended ? 'mss-btn-primary' : 'mss-btn-ghost'"
+                [rounded]="true"
+              />
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="solutions__reassure">
+        <div class="reassure">
+          <i class="pi pi-refresh reassure__icon" aria-hidden="true"></i>
+          <div>
+            <div class="reassure__title">Month-to-month, always</div>
+            <p class="reassure__text">
+              Cancel anytime. Unused hours roll over one month. No ransom tactics — you own every file, account, and login.
+            </p>
+          </div>
+        </div>
+        <div class="reassure">
+          <i class="pi pi-users reassure__icon" aria-hidden="true"></i>
+          <div>
+            <div class="reassure__title">Human, not a help-desk</div>
+            <p class="reassure__text">
+              You email <strong>me</strong>. No tickets, no bots, no farmed-out overseas teams. The same engineer who built it supports it.
+            </p>
+          </div>
+        </div>
+        <div class="reassure">
+          <i class="pi pi-chart-bar reassure__icon" aria-hidden="true"></i>
+          <div>
+            <div class="reassure__title">Quarterly business reviews</div>
+            <p class="reassure__text">
+              Every quarter we walk through analytics, identify wins, and plan the next move — tied to your goals, not vanity metrics.
+            </p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <p class="solutions__note mss-body-sm mss-text-muted">
+      Transparent pricing · 50% deposit to schedule · remainder on launch. Payment plans available for
+      Partner and multi-month Care engagements.
+    </p>
+  </div>
+</section>

@@ -1,0 +1,51 @@
+<footer class="footer">
+  <div class="mss-container footer__inner">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="footer__mark" href="/" aria-label="Mustard Seed Solutions — Home">
+          <span class="footer__mark-square" aria-hidden="true">
+            <img class="footer__mark-logo" src="/mustard-seed-glyph-logo.svg" alt="" />
+          </span>
+          <span class="footer__wordmark">
+            <span class="footer__wordmark-top">Mustard Seed</span>
+            <span class="footer__wordmark-bottom">Solutions</span>
+          </span>
+        </a>
+        <p class="footer__tagline mss-body-sm mss-text-secondary">
+          Faith-rooted web studio serving Northwest Arkansas. Websites built to earn trust and generate real leads.
+        </p>
+        <p class="footer__verse mss-body-sm mss-text-muted">
+          <em>
+            &ldquo;The kingdom of heaven is like a mustard seed&hellip; the smallest of all seeds, but when it
+            grows, it becomes the largest of garden plants.&rdquo;
+          </em>
+          <br />
+          <span class="footer__verse-ref">— Matthew 13:31–32</span>
+        </p>
+      </div>
+
+      @for (column of columns; track column.title) {
+        <div class="footer__col">
+          <h3 class="footer__col-title">{{ column.title }}</h3>
+          <ul class="footer__list">
+            @for (link of column.links; track link.label) {
+              <li>
+                <a class="footer__link" [href]="link.href">{{ link.label }}</a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    <p-divider styleClass="footer__divider" />
+
+    <div class="footer__bottom">
+      <p class="mss-body-sm mss-text-muted">© {{ currentYear }} Mustard Seed Solutions. All rights reserved.</p>
+      <div class="footer__legal">
+        <a class="footer__legal-link" href="#">Privacy</a>
+        <a class="footer__legal-link" href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>

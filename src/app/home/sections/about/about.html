@@ -1,0 +1,67 @@
+<section id="about" class="about mss-section mss-section--base" aria-labelledby="about-heading">
+  <div class="mss-container about__inner">
+    <div class="about__copy">
+      <span class="mss-eyebrow mss-eyebrow--orange">About the studio</span>
+      <h2 id="about-heading" class="mss-display-lg">
+        A faith-rooted web partner, right here in Northwest Arkansas.
+      </h2>
+      <p class="mss-body-lg mss-text-secondary about__lede">
+        I&rsquo;m Drake — a senior software engineer turned small-business builder. Mustard Seed
+        Solutions exists to give owners and ministries a calm, competent partner for their online
+        presence. You shouldn&rsquo;t need a marketing agency to get a website that actually works.
+      </p>
+
+      <div class="about__values">
+        @for (value of values; track value.title) {
+          <div class="value">
+            <div class="value__icon" aria-hidden="true">
+              <i [class]="value.icon"></i>
+            </div>
+            <div>
+              <h3 class="value__title mss-h4">{{ value.title }}</h3>
+              <p class="value__description mss-body mss-text-secondary">{{ value.description }}</p>
+            </div>
+          </div>
+        }
+      </div>
+
+      <dl class="about__stats">
+        @for (stat of stats; track stat.label) {
+          <div class="about__stat">
+            <dt class="about__stat-value">{{ stat.value }}</dt>
+            <dd class="about__stat-label">{{ stat.label }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+
+    <aside class="about__aside" aria-label="Client story">
+      <figure class="testimonial">
+        <p-rating [(ngModel)]="rating" [readonly]="true" styleClass="testimonial__rating" />
+        <blockquote class="testimonial__quote mss-body-lg">
+          &ldquo;Drake built our new site in three weeks flat. Calls started the day we went live,
+          and he actually picks up when I call. It&rsquo;s refreshing — and the site looks sharper
+          than our competitors&rsquo; too.&rdquo;
+        </blockquote>
+        <figcaption class="testimonial__person">
+          <p-avatar label="JT" shape="circle" size="large" styleClass="testimonial__avatar" />
+          <div>
+            <p class="testimonial__name">John Tran</p>
+            <p class="testimonial__role">Owner · Tran Builders, Bentonville AR</p>
+          </div>
+        </figcaption>
+      </figure>
+
+      <div class="about__service-area">
+        <div class="about__service-area-head">
+          <i class="pi pi-map-marker" aria-hidden="true"></i>
+          <p class="about__service-area-title">Serving Northwest Arkansas</p>
+        </div>
+        <p class="mss-body-sm mss-text-secondary">
+          Bentonville · Rogers · Springdale · Fayetteville · Bella Vista — and remote clients across
+          the country who want real conversations, not ticket queues.
+        </p>
+      </div>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,545 @@
+---
+description: Angular & TypeScript standards — standalone components, signals, control flow, strict mode
+globs: "**/*.{ts,html}"
+alwaysApply: true
+---
+
+# Angular & Typescript Standards
+
+This document defines the Angular and Typescript coding standards, all code must follow these patterns and conventions
+
+## Modern Angular Patterns (Required)
+
+### Standalone Components
+
+**All new components must be standalone** (no NgModules)
+
+- **Never** declare components in NgModules
+- Import specific dependencies, not barrel modules
+- Keep imports list minimal and explicit
+
+```typescript
+// ✅ DO: Standalone component with explicit imports
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { NgOptimizedImage } from '@angular/common';
+
+@Component({
+  selector: 'app-header',
+  standalone: true,
+  imports: [RouterLink, NgOptimizedImage],
+  templateUrl: './header.component.html',
+})
+export class HeaderComponent {}
+
+// ❌ DON'T: Declaring in an NgModule
+@NgModule({
+  declarations: [HeaderComponent],
+  imports: [CommonModule, RouterModule],
+})
+export class HeaderModule {}
+```
+
+### Control Flow Syntax
+
+**Use modern control flow** (`@if`, `@for`, `@switch`) instead of structural directives
+
+**Requirements:**
+
+- Always include `track` expression in `@for`
+- Use `track item.id` or `track $index` for primitive arrays
+- No `*ngIf`, `ngFor`, `ngSwitch` in new code
+
+```html
+<!-- ✅ DO: Modern control flow -->
+@if (user()) {
+<p>Welcome, {{ user().name }}</p>
+} @else {
+<p>Please log in.</p>
+} @for (item of items(); track item.id) {
+<li>{{ item.label }}</li>
+} @switch (status()) { @case ('active') { <span>Active</span> } @case ('inactive') {
+<span>Inactive</span> } @default { <span>Unknown</span> } }
+
+<!-- ❌ DON'T: Structural directives -->
+<p *ngIf="user">Welcome</p>
+<li *ngFor="let item of items">{{ item.label }}</li>
+<span [ngSwitch]="status">...</span>
+```
+
+### Signals (Preferred State Management)
+
+**Use signals for reactive state** instead of traditional observables when possible:
+
+**Signal Guidelines:**
+
+- Use `signal()` for mutable reactive state
+- Use `computed()` for derived values
+- Use `effect()` for side effects (logging, localStorage, etc.)
+- Call signals with `()` to read values
+- Use `.set()` to replace, `.update()` to transform
+- Signals are synchronus - no async/await needed
+
+```typescript
+import { Component, signal, computed, effect } from '@angular/core';
+
+@Component({ ... })
+export class CounterComponent {
+  // ✅ DO: signal() for mutable state
+  count = signal(0);
+
+  // ✅ DO: computed() for derived values
+  doubled = computed(() => this.count() * 2);
+
+  constructor() {
+    // ✅ DO: effect() for side effects
+    effect(() => {
+      localStorage.setItem('count', String(this.count()));
+    });
+  }
+
+  increment(): void {
+    // ✅ DO: .update() to transform based on current value
+    this.count.update(c => c + 1);
+  }
+
+  reset(): void {
+    // ✅ DO: .set() to replace the value
+    this.count.set(0);
+  }
+}
+```
+
+### ViewChild Pattern with Signals and Effect
+
+**PREFERRED**: Use signal-based `viewChild()` instead of `@ViewChild` decorator, and react to template availability using `effect()` instead of `ngAfterViewInit`.
+
+```typescript
+import { Component, viewChild, ElementRef, effect } from '@angular/core';
+
+@Component({ ... })
+export class ChartComponent {
+  // ✅ DO: signal-based viewChild()
+  private canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
+
+  constructor() {
+    effect(() => {
+      const el = this.canvas();
+      if (el) {
+        // Runs whenever canvas becomes available
+        this.initChart(el.nativeElement);
+      }
+    });
+  }
+
+  // ❌ DON'T: @ViewChild decorator + ngAfterViewInit
+  // @ViewChild('canvas') canvas!: ElementRef<HTMLCanvasElement>;
+  // ngAfterViewInit() { this.initChart(this.canvas.nativeElement); }
+}
+```
+
+### Input/Output Properties
+
+**Use signal-based input()/output()** instead of decorators
+
+```typescript
+import { Component, input, output } from '@angular/core';
+
+@Component({ ... })
+export class ButtonComponent {
+  // ✅ DO: signal-based inputs
+  label = input.required<string>();
+  disabled = input(false);
+
+  // ✅ DO: signal-based output
+  clicked = output<void>();
+
+  handleClick(): void {
+    this.clicked.emit();
+  }
+}
+
+// ❌ DON'T: decorator-based inputs/outputs
+// @Input() label!: string;
+// @Output() clicked = new EventEmitter<void>();
+```
+
+```html
+<!-- Usage in template — same as before -->
+<app-button [label]="'Submit'" (clicked)="onSubmit()" />
+```
+
+### Dependacy Injection
+
+**Both `inject()` and contructor injection are acceptable**
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { UserService } from './user.service';
+
+// ✅ DO: inject() function (preferred for new code)
+@Component({ ... })
+export class ProfileComponent {
+  private userService = inject(UserService);
+}
+
+// ✅ ALSO OK: constructor injection
+@Component({ ... })
+export class ProfileComponent {
+  constructor(private userService: UserService) {}
+}
+```
+
+### Change Detection
+
+**Always use OnPush change detection**
+
+```typescript
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+
+// ✅ DO: OnPush on every component
+@Component({
+  selector: 'app-card',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './card.component.html',
+})
+export class CardComponent {}
+
+// ❌ DON'T: Default change detection (omitting changeDetection)
+@Component({
+  selector: 'app-card',
+  standalone: true,
+  templateUrl: './card.component.html',
+})
+export class CardComponent {}
+```
+
+### Class/Style Bindings
+
+**Use direct bindings** instead of `ngClass`/`ngStyle`
+
+```html
+<!-- ✅ DO: Direct class and style bindings -->
+<button [class.active]="isActive()" [class.disabled]="isDisabled()">Click</button>
+<p [style.color]="textColor()" [style.font-size.px]="fontSize()">Hello</p>
+
+<!-- ✅ DO: class binding with an object expression for multiple classes -->
+<div [class]="{ active: isActive(), hidden: !isVisible() }">Content</div>
+
+<!-- ❌ DON'T: ngClass / ngStyle -->
+<button [ngClass]="{ active: isActive(), disabled: isDisabled() }">Click</button>
+<p [ngStyle]="{ color: textColor(), fontSize: fontSize() + 'px' }">Hello</p>
+```
+
+### Template Restictions
+
+**No arrow functions or complex logic in templates**
+
+```html
+<!-- ✅ DO: call a method defined on the component class -->
+<button (click)="handleSave()">Save</button>
+<p>{{ formatDate(event().date) }}</p>
+
+<!-- ❌ DON'T: arrow functions or inline logic in templates -->
+<button (click)="() => save(item)">Save</button>
+<p>{{ items().filter(i => i.active).length }}</p>
+```
+
+```typescript
+// ✅ DO: move logic into the component
+export class EventComponent {
+  handleSave(): void {
+    /* ... */
+  }
+  formatDate(date: Date): string {
+    return date.toLocaleDateString();
+  }
+}
+```
+
+---
+
+## TypeScript Standards (Required)
+
+### Strict Mode
+
+**TypeScript strict mode is enabled**
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "strict": true
+  }
+}
+```
+
+### Type Annotations
+
+**Explixt types required**
+
+**Rules:**
+
+- All function parameters must have types
+- All function return types must be explicit
+- Public properties must have types
+- No `any` type (use `unknown` if truly dynamic)
+
+```typescript
+// ✅ DO: explicit types everywhere
+export class UserService {
+  private apiUrl: string = '/api/users';
+
+  getUser(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
+  }
+
+  parsePayload(data: unknown): User {
+    if (!isUser(data)) throw new Error('Invalid payload');
+    return data;
+  }
+}
+
+// ❌ DON'T: implicit or any types
+getUser(id) { ... }           // missing parameter type
+getUser(id: number) { ... }   // missing return type
+parse(data: any) { ... }      // any type
+```
+
+### Immutability
+
+**Prefer readonly and const**
+
+```typescript
+// ✅ DO: readonly for properties that should not be reassigned
+export class AppConfig {
+  readonly apiBase: string = 'https://api.example.com';
+  readonly maxRetries: number = 3;
+}
+
+// ✅ DO: readonly arrays and objects
+export class NavComponent {
+  readonly navItems: readonly NavItem[] = [
+    { label: 'Home', path: '/' },
+    { label: 'About', path: '/about' },
+  ];
+}
+
+// ❌ DON'T: mutable properties that are never reassigned
+export class AppConfig {
+  apiBase: string = 'https://api.example.com';
+}
+```
+
+### Interface vs Type
+
+**Use interfaces for object shapes**, types for unions/intersections
+
+```typescript
+// ✅ DO: interface for object shapes
+export interface User {
+  readonly id: number;
+  name: string;
+  email: string;
+}
+
+// ✅ DO: type alias for unions and intersections
+export type Status = 'active' | 'inactive' | 'pending';
+export type AdminUser = User & { role: 'admin' };
+
+// ❌ DON'T: type alias for plain object shapes
+export type User = {
+  id: number;
+  name: string;
+};
+```
+
+---
+
+## Accessibility (Required)
+
+### Sematic HTML
+
+**Use semantic elements** instead of generic divs
+
+```html
+<!-- ✅ DO: semantic HTML elements -->
+<header>
+  <nav aria-label="Main navigation">
+    <ul>
+      <li><a routerLink="/">Home</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <h1>Page Title</h1>
+    <section aria-labelledby="section-heading">
+      <h2 id="section-heading">Section</h2>
+      <p>Content</p>
+    </section>
+  </article>
+</main>
+
+<footer>
+  <p>&copy; 2026 Asian American Church</p>
+</footer>
+
+<!-- ❌ DON'T: div soup -->
+<div class="header">
+  <div class="nav">
+    <div class="nav-item"><a routerLink="/">Home</a></div>
+  </div>
+</div>
+```
+
+---
+
+## Path Mappings
+
+**User configured path aliases**
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "paths": {
+      "@app/*": ["src/app/*"],
+      "@env/*": ["src/environments/*"],
+      "@shared/*": ["src/app/shared/*"]
+    }
+  }
+}
+```
+
+```typescript
+// ✅ DO: use path aliases
+import { UserService } from '@app/services/user.service';
+import { ButtonComponent } from '@shared/components/button.component';
+
+// ❌ DON'T: deep relative imports
+import { UserService } from '../../../services/user.service';
+```
+
+---
+
+## Forms (Reactive Only)
+
+**Use typed reactive forms**
+**Never use template driven forms**
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+@Component({
+  standalone: true,
+  imports: [ReactiveFormsModule],
+  templateUrl: './contact.component.html',
+})
+export class ContactComponent {
+  private fb = inject(FormBuilder);
+
+  // ✅ DO: typed reactive form
+  form = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    message: ['', Validators.required],
+  });
+
+  submit(): void {
+    if (this.form.valid) {
+      console.log(this.form.getRawValue());
+    }
+  }
+}
+```
+
+```html
+<!-- ✅ DO: bind to reactive form -->
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <input formControlName="name" />
+  <input formControlName="email" type="email" />
+  <textarea formControlName="message"></textarea>
+  <button type="submit" [disabled]="form.invalid">Send</button>
+</form>
+
+<!-- ❌ DON'T: template-driven forms -->
+<!-- <form #f="ngForm"> <input [(ngModel)]="name" /> </form> -->
+```
+
+---
+
+## Performance Best Practices
+
+### trackBy Functions
+
+**Always use trackBy in loops**
+
+```html
+<!-- ✅ DO: track by unique id in @for -->
+@for (member of members(); track member.id) {
+<app-member-card [member]="member" />
+}
+
+<!-- ✅ DO: track $index for primitive arrays -->
+@for (tag of tags(); track $index) {
+<span class="tag">{{ tag }}</span>
+}
+```
+
+### Pure Pipes
+
+**Create pure pipes for transformations**
+
+```typescript
+import { Pipe, PipeTransform } from '@angular/core';
+
+// ✅ DO: pure pipe (default) for any value transformation
+@Pipe({
+  name: 'truncate',
+  standalone: true,
+  pure: true, // default — explicit for clarity
+})
+export class TruncatePipe implements PipeTransform {
+  transform(value: string, maxLength: number = 100): string {
+    return value.length > maxLength ? `${value.slice(0, maxLength)}…` : value;
+  }
+}
+```
+
+```html
+<!-- Usage -->
+<p>{{ sermon.description | truncate:120 }}</p>
+```
+
+### Lazy Loading
+
+**Lazy load feature routes**
+
+```typescript
+// ✅ DO: lazy-load feature routes with loadComponent / loadChildren
+export const routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./home/home.component').then(m => m.HomeComponent),
+  },
+  {
+    path: 'sermons',
+    loadChildren: () =>
+      import('./sermons/sermons.routes').then(m => m.SERMON_ROUTES),
+  },
+  {
+    path: 'about',
+    loadComponent: () =>
+      import('./about/about.component').then(m => m.AboutComponent),
+  },
+];
+
+// ❌ DON'T: eagerly import feature components in the root routes
+import { SermonsComponent } from './sermons/sermons.component';
+{ path: 'sermons', component: SermonsComponent }
+```
