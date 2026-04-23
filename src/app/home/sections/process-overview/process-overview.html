@@ -1,0 +1,52 @@
+<section
+  id="process"
+  class="process-overview mss-section mss-section--base"
+  aria-labelledby="process-overview-heading"
+>
+  <div class="process-overview__bg" aria-hidden="true">
+    <div class="process-overview__bg-grid"></div>
+    <div class="process-overview__bg-glow process-overview__bg-glow--a"></div>
+    <div class="process-overview__bg-glow process-overview__bg-glow--b"></div>
+  </div>
+
+  <div class="mss-container process-overview__inner">
+    <header class="process-overview__header">
+      <span class="mss-eyebrow mss-eyebrow--orange">The process</span>
+      <h2 id="process-overview-heading" class="mss-display-lg">
+        Six calm steps — every deliverable in writing.
+      </h2>
+      <p class="mss-body-lg mss-text-secondary process-overview__lede">
+        We built our workflow around the thing small businesses need most: no surprises. Each phase
+        has a clear handoff, timeline, and named output — so you always know what comes next.
+      </p>
+    </header>
+
+    <ol class="process-overview__phases" aria-label="Process phases at a glance">
+      @for (p of phases; track p.num) {
+        <li class="process-overview__phase">
+          <span class="process-overview__phase-num" aria-hidden="true">{{ p.num }}</span>
+          <span class="process-overview__phase-title">{{ p.title }}</span>
+        </li>
+      }
+    </ol>
+
+    <dl class="process-overview__stats">
+      @for (s of stats; track s.label) {
+        <div class="process-overview__stat">
+          <dt class="process-overview__stat-value">{{ s.value }}</dt>
+          <dd class="process-overview__stat-label">{{ s.label }}</dd>
+        </div>
+      }
+    </dl>
+
+    <div class="process-overview__actions">
+      <a
+        routerLink="/process"
+        class="p-button p-component p-button-lg mss-btn-primary process-overview__cta"
+      >
+        <span>See the full process</span>
+        <i class="pi pi-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+</section>

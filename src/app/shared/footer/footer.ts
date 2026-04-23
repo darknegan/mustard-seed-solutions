@@ -35,7 +35,7 @@ export class FooterComponent {
     {
       title: 'Studio',
       links: [
-        { label: 'Process', href: '/#process' },
+        { label: 'Process', href: '/process' },
         { label: 'About', href: '/about' },
         { label: 'Service area', href: '/about' },
         { label: 'Free consult', href: '/#contact' },

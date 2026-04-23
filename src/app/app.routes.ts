@@ -12,6 +12,11 @@ export const routes: Routes = [
     title: 'Solutions & pricing — Mustard Seed Solutions',
   },
   {
+    path: 'process',
+    loadComponent: () => import('./process/process-page').then((m) => m.ProcessPageComponent),
+    title: 'How we work — Mustard Seed Solutions',
+  },
+  {
     path: 'about',
     loadComponent: () => import('./about/about-page').then((m) => m.AboutPageComponent),
     title: 'About — Mustard Seed Solutions',

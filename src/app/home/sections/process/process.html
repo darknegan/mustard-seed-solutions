@@ -129,26 +129,6 @@
       }
     </ol>
 
-    <div class="process__principles" aria-label="Principles behind the process">
-      <div class="process__principles-head">
-        <span class="mss-eyebrow">What holds it together</span>
-        <h3 class="mss-h1">Principles we never compromise on.</h3>
-      </div>
-      <div class="process__principles-grid">
-        @for (p of principles; track p.title) {
-          <article class="principle">
-            <div class="principle__icon" aria-hidden="true">
-              <i [class]="p.icon"></i>
-            </div>
-            <h4 class="principle__title mss-h4">{{ p.title }}</h4>
-            <p class="principle__description mss-body-sm mss-text-secondary">
-              {{ p.description }}
-            </p>
-          </article>
-        }
-      </div>
-    </div>
-
     <div class="process__cta">
       <div class="process__cta-text">
         <h3 class="mss-h2">See the process in action — on <em>your</em> business.</h3>

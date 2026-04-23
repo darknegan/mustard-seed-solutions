@@ -1,0 +1,59 @@
+<section
+  class="process-principles mss-section mss-section--base"
+  aria-label="Principles behind the process"
+>
+  <div class="process-principles__bg" aria-hidden="true">
+    <div class="process-principles__bg-grid"></div>
+    <div class="process-principles__bg-glow process-principles__bg-glow--a"></div>
+    <div class="process-principles__bg-glow process-principles__bg-glow--b"></div>
+    <div class="process-principles__bg-glow process-principles__bg-glow--c"></div>
+  </div>
+
+  <div class="mss-container process-principles__container">
+    <div class="process-principles__shell">
+      <div class="process-principles__shell-glow" aria-hidden="true"></div>
+
+      <header class="process-principles__header">
+        <div class="process-principles__header-inner">
+          <span class="mss-eyebrow mss-eyebrow--orange">What holds it together</span>
+          <h2 class="mss-h1 process-principles__title">
+            Principles we
+            <span class="process-principles__title-accent">never</span> compromise on.
+          </h2>
+          <p class="mss-body mss-text-secondary process-principles__subhead">
+            The non-negotiables behind every engagement — so you always get clarity, not chaos.
+          </p>
+        </div>
+        <div class="process-principles__header-meta" aria-hidden="true">
+          <div class="process-principles__meta-segment"></div>
+          <div class="process-principles__meta-segment"></div>
+          <div class="process-principles__meta-segment"></div>
+        </div>
+      </header>
+
+      <ul class="process-principles__grid">
+        @for (p of principles; track p.title; let i = $index) {
+          <li
+            class="principle"
+            [class.principle--1]="i === 0"
+            [class.principle--2]="i === 1"
+            [class.principle--3]="i === 2"
+            [class.principle--4]="i === 3"
+          >
+            <span class="principle__index" aria-hidden="true">{{ indexLabel(i) }}</span>
+            <div class="principle__top">
+              <div class="principle__icon" aria-hidden="true">
+                <span class="principle__icon-ring"></span>
+                <i [class]="p.icon"></i>
+              </div>
+              <h3 class="principle__title mss-h4">{{ p.title }}</h3>
+            </div>
+            <p class="principle__description mss-body-sm mss-text-secondary">
+              {{ p.description }}
+            </p>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

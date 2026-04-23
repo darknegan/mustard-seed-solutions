@@ -157,13 +157,18 @@
     transform 0.25s ease,
     border-color 0.25s ease,
     box-shadow 0.25s ease;
-  overflow: hidden;
+  /* Must stay visible: "Most chosen" / "Recommended" p-tag sits at top: -14px. */
+  overflow: visible;
+  min-height: 0;
+  isolation: isolate;
 }
 
 .tier::before {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 0;
+  border-radius: inherit;
   background: linear-gradient(180deg, transparent 0%, transparent 80%, rgba(255, 255, 255, 0.02) 100%);
   pointer-events: none;
 }
@@ -194,15 +199,27 @@
     0 30px 60px -30px rgba(14, 165, 233, 0.35);
 }
 
-:host ::ng-deep .tier__badge.p-tag {
+/* p-tag is ViewEncapsulation.None: theme layer can win without !important */
+:host ::ng-deep p-tag.p-tag.tier__badge,
+:host ::ng-deep p-tag.p-tag.tier__badge--sky {
   position: absolute;
   top: -14px;
   left: 30px;
-  background: var(--mss-orange-strong);
-  color: var(--mss-text-on-brand);
+  z-index: 2;
+  border: none;
 }
-:host ::ng-deep .tier__badge--sky.p-tag {
-  background: var(--mss-sky-strong);
+:host ::ng-deep p-tag.p-tag.tier__badge {
+  background: var(--mss-orange-strong) !important;
+  color: var(--mss-text-on-brand) !important;
+}
+:host ::ng-deep p-tag.p-tag.tier__badge--sky {
+  background: var(--mss-sky-strong) !important;
+  color: var(--mss-text-on-brand) !important;
+}
+
+.tier > *:not(p-tag) {
+  position: relative;
+  z-index: 1;
 }
 
 .tier__head {
@@ -364,10 +381,11 @@
 .tier__cta {
   margin-top: auto;
   display: flex;
-}
-.tier__cta :host ::ng-deep .p-button,
-.tier__cta .p-button {
   width: 100%;
+}
+.tier__cta ::ng-deep .p-button {
+  width: 100%;
+  justify-content: center;
 }
 
 /* =============== Tech pillars =============== */
