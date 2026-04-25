@@ -93,9 +93,18 @@ svg {
   width: 100%;
   padding-block: 120px;
 }
+/* First section on a route (below global header) — avoids double gap with mss-section top padding */
+.mss-section.mss-section--page-top {
+  padding-top: 32px;
+  padding-bottom: 120px;
+}
 @media (max-width: 768px) {
   .mss-section {
     padding-block: 72px;
+  }
+  .mss-section.mss-section--page-top {
+    padding-top: 24px;
+    padding-bottom: 72px;
   }
 }
 

@@ -1,9 +1,23 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   min-height: 100dvh;
   background: var(--mss-bg-base);
 }
 
 main {
+  position: relative;
+  flex: 1 0 auto;
   display: block;
+  min-width: 0;
+}
+
+.app-route-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in oklab, var(--mss-bg-base) 88%, transparent);
 }

@@ -18,6 +18,7 @@ export class NavComponent {
   protected readonly mobileOpen = signal(false);
 
   protected readonly links: readonly NavLink[] = [
+    { label: 'Home', href: '/' },
     { label: 'Process', href: '/process' },
     { label: 'About', href: '/about' },
     { label: 'Solutions', href: '/solutions' },

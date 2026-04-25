@@ -1,0 +1,67 @@
+:host {
+  --loading-spinner-size: 2.5rem;
+  --loading-spinner-stroke: 0.25rem;
+  --loading-spinner-color: var(--mss-sky);
+  --loading-spinner-glow: var(--mss-glow-sky);
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--mss-text-secondary);
+}
+
+:host(.loading-spinner--sm) {
+  --loading-spinner-size: 1.5rem;
+  --loading-spinner-stroke: 0.1875rem;
+}
+
+:host(.loading-spinner--md) {
+  --loading-spinner-size: 2.5rem;
+  --loading-spinner-stroke: 0.25rem;
+}
+
+:host(.loading-spinner--lg) {
+  --loading-spinner-size: 3.5rem;
+  --loading-spinner-stroke: 0.3125rem;
+}
+
+:host(.loading-spinner--orange) {
+  --loading-spinner-color: var(--mss-orange-strong);
+  --loading-spinner-glow: var(--mss-glow-orange);
+}
+
+.loading-spinner__visual {
+  position: relative;
+  width: var(--loading-spinner-size);
+  height: var(--loading-spinner-size);
+}
+
+.loading-spinner__track,
+.loading-spinner__arc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.loading-spinner__track {
+  border: var(--loading-spinner-stroke) solid var(--mss-border-subtle);
+}
+
+.loading-spinner__arc {
+  border: var(--loading-spinner-stroke) solid var(--loading-spinner-color);
+  border-left-color: transparent;
+  filter: drop-shadow(0 0 0.45rem var(--loading-spinner-glow));
+  animation: loading-spinner-rotate 0.75s linear infinite;
+}
+
+.loading-spinner__label {
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+}
+
+@keyframes loading-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

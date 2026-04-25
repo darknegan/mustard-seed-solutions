@@ -1,24 +1,30 @@
 import { Routes } from '@angular/router';
 
+import { AboutPageComponent } from './about/about-page';
+import { Home } from './home/home';
+import { ProcessPageComponent } from './process/process-page';
+import { SolutionsPageComponent } from './solutions/solutions-page';
+
+// Eager top-level routes so each navigation resolves synchronously (no lazy-chunk delay).
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./home/home').then((m) => m.Home),
+    component: Home,
     title: 'Mustard Seed Solutions — Websites that earn trust and generate real leads',
   },
   {
     path: 'solutions',
-    loadComponent: () => import('./solutions/solutions-page').then((m) => m.SolutionsPageComponent),
+    component: SolutionsPageComponent,
     title: 'Solutions & pricing — Mustard Seed Solutions',
   },
   {
     path: 'process',
-    loadComponent: () => import('./process/process-page').then((m) => m.ProcessPageComponent),
+    component: ProcessPageComponent,
     title: 'How we work — Mustard Seed Solutions',
   },
   {
     path: 'about',
-    loadComponent: () => import('./about/about-page').then((m) => m.AboutPageComponent),
+    component: AboutPageComponent,
     title: 'About — Mustard Seed Solutions',
   },
   {

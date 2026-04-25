@@ -1,5 +1,10 @@
 <app-nav />
-<main id="main">
+<main id="main" [attr.aria-busy]="routeLoading() ? 'true' : 'false'">
   <router-outlet />
+  @if (routeLoading()) {
+    <div class="app-route-loader">
+      <app-loading-spinner size="md" color="sky" label="Loading" />
+    </div>
+  }
 </main>
 <app-footer />
