@@ -28,10 +28,10 @@ export class HeroComponent implements OnInit, OnDestroy {
   private phraseIntervalId: ReturnType<typeof setInterval> | null = null;
 
   protected readonly stats: readonly HeroStat[] = [
-    { value: '2–3 wk', label: 'Avg launch time' },
-    { value: '99 / 100', label: 'Lighthouse perf' },
-    { value: '100%', label: 'Human support' },
-    { value: 'NWA', label: 'Local · remote-ready' },
+    { value: '2–3 wk', label: 'Typical go-live time' },
+    { value: 'Quick', label: 'Speed & quality built in' },
+    { value: '100%', label: 'You talk to a person' },
+    { value: 'NWA', label: 'Local · works with remote clients' },
   ];
 
   ngOnInit(): void {

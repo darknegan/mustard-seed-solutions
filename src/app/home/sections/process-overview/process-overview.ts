@@ -29,9 +29,9 @@ export class ProcessOverviewComponent {
   ];
 
   protected readonly stats: readonly StatLine[] = [
-    { value: '6', label: 'Phases · every one documented' },
-    { value: '14-56d', label: 'Typical kickoff → launch window' },
-    { value: '0', label: 'Surprise change-orders · ever' },
-    { value: '90d', label: 'Post-launch warranty on us' },
+    { value: '6', label: 'Steps — each one documented' },
+    { value: '2–8 wks', label: 'Typical start to go-live' },
+    { value: '0', label: 'Surprise add-on bills — ever' },
+    { value: '90d', label: 'We stand behind the work after launch' },
   ];
 }

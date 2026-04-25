@@ -24,25 +24,25 @@ export class ProcessPrinciplesComponent {
       icon: 'pi pi-eye',
       title: 'Radical transparency',
       description:
-        'Every stage has a published deliverable. No black boxes, no surprise invoices, no "just trust me".',
+        'Every stage has a clear written list of what you get. No black boxes, no surprise invoices, no "just trust me."',
     },
     {
       icon: 'pi pi-calendar',
       title: 'Fixed scope & price',
       description:
-        'You sign off on scope before we build. Change requests are quoted in writing — no hourly drift.',
+        'You approve the plan before we build. If you want to add or change something later, you get a written price first — not a running meter.',
     },
     {
       icon: 'pi pi-comments',
       title: 'Weekly real check-ins',
       description:
-        'Every Friday: a Loom video or real call. You always know where we are and what is next.',
+        'Every week: a short video update or a real phone call, your choice. You always know where we are and what is next.',
     },
     {
       icon: 'pi pi-lock',
       title: 'You own everything',
       description:
-        'Code, domain, hosting, analytics, CMS — in your accounts, from day one. No vendor lock-in.',
+        'Your site files, your web address, hosting, and visitor numbers live in your accounts from day one. We are your partner, not a gatekeeper.',
     },
   ];
 }

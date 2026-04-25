@@ -26,9 +26,9 @@ export class AboutComponent {
   protected readonly rating = 5;
 
   protected readonly stats: readonly AboutStat[] = [
-    { value: '10+ yrs', label: 'Software engineering' },
+    { value: '10+ yrs', label: 'Building sites & software' },
     { value: '100%', label: 'Local & faith-rooted' },
-    { value: '1:1', label: 'You talk to the builder' },
+    { value: '1:1', label: 'You talk to the person who builds it' },
   ];
 
   protected readonly values: readonly AboutValue[] = [
@@ -48,7 +48,7 @@ export class AboutComponent {
       icon: 'pi pi-check-circle',
       title: 'Craft that lasts',
       description:
-        'Modern, accessible, fast. Built on solid foundations so your site still feels good in five years.',
+        'Fast, easy to use, and built to stay that way — so your site still feels sharp in five years.',
     },
   ];
 }

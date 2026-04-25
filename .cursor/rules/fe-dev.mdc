@@ -32,6 +32,7 @@ Implement production-ready Angular code for this application. You write clean, t
 Follow the project rules in:
 
 - **`.cursor/rules/angular-standards.mdc`** — Angular & TypeScript patterns (applies when editing `*.ts` / `*.html`)
+- **`.cursor/rules/client-audience-content.mdc`** — all **client-facing** text must use plain, non-technical language (see that file for scope and examples)
 - **SignalStore**: If `.cursor/rules/signal-store-standards.mdc` exists in this repo, follow it for `@ngrx/signals` state
 
 Before writing code, read the relevant rule file(s) to ensure compliance.

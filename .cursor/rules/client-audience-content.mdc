@@ -1,0 +1,29 @@
+---
+description: Client-facing copy — plain language for a non-technical audience
+alwaysApply: true
+---
+
+# Client-Facing Content (Non-Technical Audience)
+
+Assume **prospective clients and site visitors are not tech-savvy** unless a page is explicitly for developers. When you write or edit **user-visible** text (headings, body copy, CTAs, nav labels, stats, step descriptions, data shown in templates, or string literals that render on the page), use language they would use in conversation about their business.
+
+## Do
+
+- Prefer **outcomes** (“loads quickly,” “shows up in search,” “you can update text yourself”) over tool names and metrics.
+- Use **short, concrete phrases**: what someone gets, when it happens, and what you need from them.
+- Replace or gloss jargon with plain English on first use, or avoid it: e.g. “how your address points to the new site” instead of “DNS cutover.”
+- Keep **credible and specific** without requiring industry vocabulary.
+
+## Avoid (in customer-facing copy)
+
+- Developer stack terms (framework, API, build pipeline, environment, stack trace).
+- Web-industry acronyms and product jargon unless the audience already uses them (WCAG, Core Web Vitals, CDN, headless, schema markup, etc.).
+- **Name tools only when it helps the reader**; otherwise describe the result (“clickable preview of the design” not “Figma prototype” for a general SMB audience).
+
+## Scope (Important)
+
+- This rule applies to **marketing and product copy on the site**, not to code identifiers, file names, internal comments for engineers, or TypeScript/Angular API usage.
+
+## Quick Check
+
+If a first-time small-business owner would need to search the term, **rephrase or explain it in line**.
