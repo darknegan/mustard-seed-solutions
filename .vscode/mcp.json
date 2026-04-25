@@ -5,6 +5,10 @@
       "command": "npx",
       "args": ["-y", "@angular/cli", "mcp"]
     },
+    "nodejs-api-docs": {
+      "command": "npx",
+      "args": ["-y", "mcp-server-nodejs-api-docs"]
+    },
     "primeng": {
       "command": "npx",
       "args": ["primeng-mcp"]
