@@ -1,0 +1,78 @@
+<div class="dashboard__content dashboard-form-page">
+  <div class="dashboard__page-intro">
+    <p class="mss-eyebrow">Request a change</p>
+    <h2 class="dashboard__title">Tell us what needs updating</h2>
+    <p class="dashboard__summary">
+      Name the page, describe the change, and pick a rough timeline—we handle the rest.
+    </p>
+  </div>
+
+  <div class="dashboard-form-page__layout">
+    <form class="dashboard-card dashboard-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <header>
+        <h3>Change details</h3>
+        <p>Plain language is perfect. We follow up if anything is unclear.</p>
+      </header>
+
+      @if (submitted()) {
+        <div class="dashboard-form__success" role="status">
+          Your request is saved. We will review it and send the next step.
+        </div>
+      }
+
+      <label class="dashboard-form__field">
+        <span>What kind of change is this?</span>
+        <select formControlName="updateType">
+          <option>Text update</option>
+          <option>Photo update</option>
+          <option>New content</option>
+          <option>Layout change</option>
+        </select>
+      </label>
+
+      <label class="dashboard-form__field">
+        <span>Which page or section?</span>
+        <input
+          type="text"
+          formControlName="pageArea"
+          placeholder="Example: homepage hero or team page"
+        />
+      </label>
+
+      <label class="dashboard-form__field">
+        <span>What should change?</span>
+        <textarea
+          formControlName="details"
+          rows="6"
+          placeholder="Tell us what to add, remove, or rewrite."
+        ></textarea>
+      </label>
+
+      <label class="dashboard-form__field">
+        <span>When do you need it?</span>
+        <select formControlName="timing">
+          <option>This week</option>
+          <option>Next week</option>
+          <option>No rush</option>
+        </select>
+      </label>
+
+      <button class="dashboard-form__submit" type="submit">Send request</button>
+    </form>
+
+    <aside class="dashboard-card dashboard-help" aria-labelledby="change-help-heading">
+      <h3 id="change-help-heading">Helpful examples</h3>
+      <div class="dashboard-help__list">
+        @for (example of examples; track example.title) {
+          <article>
+            <span aria-hidden="true"></span>
+            <div>
+              <h4>{{ example.title }}</h4>
+              <p>{{ example.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </aside>
+  </div>
+</div>

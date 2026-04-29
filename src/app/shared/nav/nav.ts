@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { AuthService } from '@app/shared/services/auth.service';
 
 interface NavLink {
   readonly label: string;
@@ -9,12 +11,14 @@ interface NavLink {
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [ButtonModule],
+  imports: [RouterLink],
   templateUrl: './nav.html',
   styleUrl: './nav.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavComponent {
+  protected readonly auth = inject(AuthService);
+
   protected readonly mobileOpen = signal(false);
 
   protected readonly links: readonly NavLink[] = [

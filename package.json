@@ -5,9 +5,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:server": "npm run dev --prefix server",
     "build": "ng build",
+    "build:server": "npm run build --prefix server",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "migrate": "npm run migrate --prefix server"
   },
   "private": true,
   "packageManager": "npm@11.8.0",

@@ -1,4 +1,6 @@
-<app-nav />
+@if (!chromeHidden()) {
+  <app-nav />
+}
 <main id="main" [attr.aria-busy]="routeLoading() ? 'true' : 'false'">
   <router-outlet />
   @if (routeLoading()) {
@@ -7,4 +9,6 @@
     </div>
   }
 </main>
-<app-footer />
+@if (!chromeHidden()) {
+  <app-footer />
+}

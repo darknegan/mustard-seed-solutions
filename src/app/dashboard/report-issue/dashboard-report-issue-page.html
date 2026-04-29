@@ -1,0 +1,81 @@
+<div class="dashboard__content dashboard-form-page dashboard-form-page--issue">
+  <div class="dashboard__page-intro">
+    <p class="mss-eyebrow mss-eyebrow--orange">Report an issue</p>
+    <h2 class="dashboard__title">Tell us what went wrong</h2>
+    <p class="dashboard__summary">
+      Even a short note helps. You can send screenshots after we reply.
+    </p>
+  </div>
+
+  <div class="dashboard-form-page__layout">
+    <form class="dashboard-card dashboard-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <header>
+        <h3>What you noticed</h3>
+        <p>The more specific you can be, the faster we can reproduce it.</p>
+      </header>
+
+      @if (submitted()) {
+        <div class="dashboard-form__success dashboard-form__success--orange" role="status">
+          Thanks for the heads-up. We will take a look and reply with an update.
+        </div>
+      }
+
+      <label class="dashboard-form__field">
+        <span>Where did you see it?</span>
+        <input
+          type="text"
+          formControlName="pageUrl"
+          placeholder="Example: homepage, contact page, or a link"
+        />
+      </label>
+
+      <label class="dashboard-form__field">
+        <span>What kind of problem is it?</span>
+        <select formControlName="issueType">
+          <option>Something looks wrong</option>
+          <option>A link or button does not work</option>
+          <option>Text or photo is incorrect</option>
+          <option>This page feels slow</option>
+        </select>
+      </label>
+
+      <label class="dashboard-form__field">
+        <span>What were you using?</span>
+        <select formControlName="device">
+          <option>Desktop computer</option>
+          <option>Laptop</option>
+          <option>Phone</option>
+          <option>Tablet</option>
+        </select>
+      </label>
+
+      <label class="dashboard-form__field">
+        <span>What happened?</span>
+        <textarea
+          formControlName="details"
+          rows="6"
+          placeholder="What you clicked, what you saw, and what you expected instead."
+        ></textarea>
+      </label>
+
+      <button class="dashboard-form__submit dashboard-form__submit--orange" type="submit">
+        Send report
+      </button>
+    </form>
+
+    <aside class="dashboard-card dashboard-help" aria-labelledby="issue-help-heading">
+      <h3 id="issue-help-heading">Details that help</h3>
+      <div class="dashboard-help__list">
+        @for (tip of tips; track tip.label) {
+          <article>
+            <span aria-hidden="true"></span>
+            <div>
+              <h4>{{ tip.label }}</h4>
+              <p>{{ tip.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </aside>
+  </div>
+</div>

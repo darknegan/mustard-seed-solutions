@@ -1,0 +1,130 @@
+<section class="login-page" aria-labelledby="login-heading">
+  <header class="login-page__nav" aria-label="Login navigation">
+    <a class="login-page__brand" routerLink="/" aria-label="Mustard Seed Solutions home">
+      <span class="login-page__mark" aria-hidden="true"></span>
+      <span>Mustard Seed Solutions</span>
+    </a>
+    <a class="login-page__back" routerLink="/">&larr; Back to site</a>
+  </header>
+
+  <div class="login-page__shell">
+    <aside class="login-page__brand-panel" aria-label="Client portal overview">
+      <div class="login-page__glow login-page__glow--sky" aria-hidden="true"></div>
+      <div class="login-page__glow login-page__glow--orange" aria-hidden="true"></div>
+
+      <p class="mss-eyebrow">Client portal</p>
+      <h1 class="login-page__headline">
+        Your site.<br />
+        Your results.<br />
+        Your account.
+      </h1>
+      <p class="login-page__lede">
+        Manage your project, track milestones, and stay connected with your team. Everything you
+        need, in one clear place.
+      </p>
+
+      <ul class="login-page__benefits" aria-label="Portal benefits">
+        <li>Real-time project visibility</li>
+        <li>Direct access to your team</li>
+        <li>Site care, visitor numbers, and updates</li>
+      </ul>
+    </aside>
+
+    <div class="login-page__form-panel">
+      @if (errorMessage()) {
+        <p class="login-card__error" role="alert">{{ errorMessage() }}</p>
+      }
+
+      @if (!isSignup()) {
+        <form class="login-card" [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate>
+          <div>
+            <h2 id="login-heading" class="login-card__title">Sign in</h2>
+            <p class="login-card__intro">Welcome back. Enter your details below.</p>
+          </div>
+
+          <label class="login-card__field">
+            <span>Email</span>
+            <input type="email" formControlName="email" autocomplete="email" placeholder="you@example.com" />
+          </label>
+
+          <label class="login-card__field">
+            <span class="login-card__label-row">
+              <span>Password</span>
+              <button type="button" class="login-card__text-button">Forgot password?</button>
+            </span>
+            <input type="password" formControlName="password" autocomplete="current-password" placeholder="••••••••" />
+          </label>
+
+          <button class="login-card__submit" type="submit" [disabled]="loading()">
+            @if (loading()) { Signing in… } @else { Sign in }
+          </button>
+
+          <div class="login-card__divider" aria-hidden="true">
+            <span></span>
+            <span>or</span>
+            <span></span>
+          </div>
+
+          <p class="login-card__signup">
+            Don&rsquo;t have an account?
+            <button type="button" class="login-card__text-button" (click)="toggleMode()">Create one &rarr;</button>
+          </p>
+        </form>
+      } @else {
+        <form class="login-card" [formGroup]="signupForm" (ngSubmit)="submitSignup()" novalidate>
+          <div>
+            <h2 id="login-heading" class="login-card__title">Create your account</h2>
+            <p class="login-card__intro">Get started with your client portal.</p>
+          </div>
+
+          <div class="login-card__row">
+            <label class="login-card__field">
+              <span>First name</span>
+              <input type="text" formControlName="firstName" autocomplete="given-name" placeholder="Jane" />
+            </label>
+
+            <label class="login-card__field">
+              <span>Last name</span>
+              <input type="text" formControlName="lastName" autocomplete="family-name" placeholder="Doe" />
+            </label>
+          </div>
+
+          <label class="login-card__field">
+            <span>Email</span>
+            <input type="email" formControlName="email" autocomplete="email" placeholder="you@example.com" />
+          </label>
+
+          <label class="login-card__field">
+            <span>Password</span>
+            <input type="password" formControlName="password" autocomplete="new-password" placeholder="At least 8 characters" />
+          </label>
+
+          <label class="login-card__field">
+            <span>Company name <small>(optional)</small></span>
+            <input type="text" formControlName="companyName" autocomplete="organization" placeholder="Acme Inc." />
+          </label>
+
+          <label class="login-card__field">
+            <span>Phone <small>(optional)</small></span>
+            <input type="tel" formControlName="phone" autocomplete="tel" placeholder="(555) 123-4567" />
+          </label>
+
+          <button class="login-card__submit" type="submit" [disabled]="loading()">
+            @if (loading()) { Creating account… } @else { Create account }
+          </button>
+
+          <div class="login-card__divider" aria-hidden="true">
+            <span></span>
+            <span>or</span>
+            <span></span>
+          </div>
+
+          <p class="login-card__signup">
+            Already have an account?
+            <button type="button" class="login-card__text-button" (click)="toggleMode()">Sign in &rarr;</button>
+          </p>
+        </form>
+      }
+    </div>
+  </div>
+</section>

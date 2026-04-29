@@ -2,7 +2,18 @@
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  width: 100%;
   background: var(--mss-bg-base);
+}
+
+/*
+ * Pin app shell to the viewport when the portal is shown so nested flex + scroll
+ * regions get a real height (min-height alone leaves gaps on some layouts).
+ */
+:host:has(app-dashboard-page) {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
 }
 
 main {
@@ -10,6 +21,44 @@ main {
   flex: 1 0 auto;
   display: block;
   min-width: 0;
+}
+
+/*
+ * Dashboard portal: Angular may render app-dashboard-page inside router-outlet OR as its
+ * sibling — flex rules on main > app-dashboard-page often never matched, leaving only
+ * the outlet as a flex item (~half height). Pin both outlet and portal host to fill main.
+ */
+main:has(app-dashboard-page) {
+  position: relative;
+  display: block;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+main:has(app-dashboard-page) > router-outlet {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+main:has(app-dashboard-page) app-dashboard-page {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .app-route-loader {

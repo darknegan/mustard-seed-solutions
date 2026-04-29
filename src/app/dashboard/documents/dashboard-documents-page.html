@@ -1,0 +1,57 @@
+<div class="dashboard__content dashboard-documents">
+  <div class="dashboard__page-intro">
+    <p class="mss-eyebrow">My documents</p>
+    <h2 class="dashboard__title">Your project files</h2>
+    <p class="dashboard__summary">
+      Approvals, launch notes, and drafts—organized here instead of scattered across messages.
+    </p>
+  </div>
+
+  <div class="dashboard__mobile-status">
+    <span aria-hidden="true"></span>
+    <span>7 files ready</span>
+    <strong>Ready</strong>
+  </div>
+
+  <div class="dashboard-documents__layout">
+    <aside class="dashboard-card dashboard-documents__folders" aria-label="Document folders">
+      <h3>Folders</h3>
+      <div class="dashboard-documents__folder-list">
+        @for (folder of folders; track folder.label) {
+          <button type="button" [class.is-active]="$first">
+            <span>{{ folder.label }}</span>
+            <strong>{{ folder.count }}</strong>
+          </button>
+        }
+      </div>
+    </aside>
+
+    <section class="dashboard-card dashboard-documents__panel" aria-labelledby="documents-heading">
+      <header>
+        <div>
+          <h3 id="documents-heading">Recent files</h3>
+          <p>Shared for AdventureCon</p>
+        </div>
+        <button type="button" class="dashboard-documents__upload">Upload</button>
+      </header>
+
+      <div class="dashboard-documents__list">
+        @for (document of documents; track document.title) {
+          <article
+            class="dashboard-document"
+            [class.dashboard-document--sky]="document.tone === 'sky'"
+            [class.dashboard-document--orange]="document.tone === 'orange'"
+          >
+            <span class="dashboard-document__icon" aria-hidden="true"></span>
+            <div>
+              <h4>{{ document.title }}</h4>
+              <p>{{ document.description }}</p>
+              <small>{{ document.updated }}</small>
+            </div>
+            <span class="dashboard-document__type">{{ document.type }}</span>
+          </article>
+        }
+      </div>
+    </section>
+  </div>
+</div>

@@ -28,6 +28,7 @@ export class App {
   private readonly router = inject(Router);
 
   protected readonly routeLoading = signal(false);
+  protected readonly chromeHidden = signal(false);
   private routeLoadingHideTimer: ReturnType<typeof setTimeout> | undefined;
   private routeLoadingStartedAt = 0;
   private initialNavigationSettled = false;
@@ -42,8 +43,8 @@ export class App {
             e instanceof NavigationStart ||
             e instanceof NavigationEnd ||
             e instanceof NavigationCancel ||
-            e instanceof NavigationError
-        )
+            e instanceof NavigationError,
+        ),
       )
       .subscribe((e) => {
         if (e instanceof NavigationStart) {
@@ -54,6 +55,7 @@ export class App {
           return;
         }
         if (e.id === this.latestNavId) {
+          this.updateChromeVisibility();
           this.markInitialSettled();
           this.completeRouteLoading();
         }
@@ -97,5 +99,17 @@ export class App {
 
     clearTimeout(this.routeLoadingHideTimer);
     this.routeLoadingHideTimer = undefined;
+  }
+
+  private updateChromeVisibility(): void {
+    let route = this.router.routerState.snapshot.root;
+    let hideChrome = route.data['hideChrome'] === true;
+
+    while (route.firstChild) {
+      route = route.firstChild;
+      hideChrome = hideChrome || route.data['hideChrome'] === true;
+    }
+
+    this.chromeHidden.set(hideChrome);
   }
 }

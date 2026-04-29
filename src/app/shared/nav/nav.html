@@ -18,12 +18,15 @@
 
     <div class="nav__cta">
       <a class="nav__link nav__link--ghost" href="/#contact">Free consult</a>
-      <p-button
-        label="Start a project"
-        styleClass="mss-btn-primary"
-        [rounded]="true"
-        (onClick)="closeMobile()"
-      />
+      @if (!auth.isLoggedIn()) {
+        <a
+          routerLink="/login"
+          class="p-button p-component p-button-rounded mss-btn-primary"
+          (click)="closeMobile()"
+        >
+          Client login
+        </a>
+      }
     </div>
 
     <button
@@ -45,11 +48,14 @@
       <a class="nav__mobile-link" [href]="link.href" (click)="closeMobile()">{{ link.label }}</a>
     }
     <a class="nav__mobile-link" href="/#contact" (click)="closeMobile()">Free consult</a>
-    <p-button
-      label="Start a project"
-      styleClass="mss-btn-primary"
-      [rounded]="true"
-      (onClick)="closeMobile()"
-    />
+    @if (!auth.isLoggedIn()) {
+      <a
+        routerLink="/login"
+        class="p-button p-component p-button-rounded mss-btn-primary"
+        (click)="closeMobile()"
+      >
+        Client login
+      </a>
+    }
   </div>
 </header>
