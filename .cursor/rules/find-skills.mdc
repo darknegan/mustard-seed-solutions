@@ -1,0 +1,36 @@
+---
+description: "Discover/install agent skills; triggers — find skill for X, how do I do X (skill), npx skills, extend agent capabilities"
+alwaysApply: false
+---
+
+# Find & install skills
+
+When user wants installable agent skills (not just repo rules):
+
+## When to use
+
+- "Find a skill for …", "is there a skill …", "how do I do X" where X is common packaged workflow
+- Wants to extend agent with domain packs (design, deploy, review, etc.)
+
+## CLI
+
+`npx skills` — package manager for open skills ecosystem.
+
+- `npx skills find [query]` — search
+- `npx skills add <package>` — install
+- `npx skills check` / `npx skills update` — maintenance
+- Browse: https://skills.sh/
+
+## Flow
+
+1. Domain + task from user message
+2. Check leaderboard https://skills.sh/ for popular match
+3. Run `npx skills find <keywords>` if needed
+4. Before recommend: prefer **1k+ installs**, reputable org (`vercel-labs`, `anthropics`, `microsoft`), sane GitHub stars
+5. Reply with: name, what it does, install command, link
+
+Install example: `npx skills add <owner/repo@skill> -g -y` (global; user confirms).
+
+## Empty results
+
+Say none found; offer help without skill; `npx skills init my-skill` if they repeat the workflow.

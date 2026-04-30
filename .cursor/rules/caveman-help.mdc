@@ -1,0 +1,33 @@
+---
+description: "Caveman commands reference; triggers — /caveman-help, caveman help, what caveman commands"
+alwaysApply: false
+---
+
+# Caveman help (one-shot)
+
+Show this reference only; **do not** toggle modes or write config files unless user asks.
+
+## Modes (`/caveman …`)
+
+| Trigger | Effect |
+|---------|--------|
+| lite | Drop filler; keep full sentences |
+| (default) full | Drop articles + filler; fragments OK |
+| ultra | Max abbreviation |
+| wenyan-lite / wenyan / wenyan-ultra | Classical Chinese tiers |
+
+Sticks until changed or session ends. **stop caveman** / **normal mode** → off.
+
+## Related rules (this repo)
+
+| Rule | Use |
+|------|-----|
+| caveman-commit | Commit messages |
+| caveman-review | PR comments |
+| caveman-compress | Shrink memory `.md` |
+
+## Optional defaults (machine)
+
+Env: `CAVEMAN_DEFAULT_MODE=ultra`. Config: `~/.config/caveman/config.json` `{ "defaultMode": "lite" }`. Resolution: env → file → full.
+
+Upstream docs: https://github.com/JuliusBrussee/caveman

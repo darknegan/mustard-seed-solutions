@@ -1,0 +1,53 @@
+---
+description: "Three distinct Figma mock options for new website; create mocks, initial designs, website mockups, three options, new website mocks"
+alwaysApply: false
+---
+
+# Initial Figma mocks — three separate files
+
+Produce **three** polished options in **three Figma files**. Each option = different palette + personality. No lorem ipsum — realistic industry copy.
+
+**Before `use_figma`:** `figma-use` + `figma-generate-design` skills per MCP. Run `use_figma` **sequentially**.
+
+## Gather first
+
+Business name, industry, audience, key pages, brand assets, inspiration, draft/final copy. Summarize plan → user OK before building.
+
+## Themes (A / B / C)
+
+Different mood, primary+accent+neutrals, typography feel, layout style, decorative angle. WCAG AA body contrast (~4.5:1). Palettes visibly distinct — not three blues.
+
+Present theme table → approval → build.
+
+## Per file
+
+### Foundations page `-- Foundations --`
+
+Swatches (hex labeled), type scale (H1–caption, button), spacing scale (e.g. 8px grid), variables for colors/spacing, text styles, effect styles (shadows).
+
+Bind components to variables — **no stray hex**.
+
+### Pages `-- Pages --`
+
+Desktop wrapper **1440px**. Minimum pages: Homepage desktop + **Homepage mobile 375px**, About, Services/Products, Contact (adjust to brief).
+
+**Quality bar**
+
+- Hero: strong imagery/illustration, headline, subhead, CTA — not flat slab only
+- Varied sections: cards, alternating media/text, grids, testimonials, stats, etc. — **no identical stacked blocks**
+- Sticky nav: logo, links, CTA; footer columns + legal/social
+- Buttons/links: component variants Default/Hover/Active/Disabled
+- Decorative depth: patterns, gradients, icons, dividers as fits theme
+- After each major section: screenshot — no clip/overlap; instances not detached
+
+### Naming
+
+Files: `[Project] — Option A: [Theme]` (B, C). Pages: Cover, Foundations (palette/type/grid), Pages with named frames — **no "Frame 47"**.
+
+## Deliver
+
+Screenshots of three homepages; comparison table (theme, colors, personality); links to files; ask preferred direction or mix.
+
+## Anti-patterns
+
+Lorem ipsum; three near-duplicate layouts; skip foundations; unnamed layers; hardcoded colors; present without rationale.

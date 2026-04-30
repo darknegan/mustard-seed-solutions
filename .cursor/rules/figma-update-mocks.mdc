@@ -1,0 +1,58 @@
+---
+description: "Edit existing Figma file on-brand; update mocks, add page, modify mock, change homepage, new page same file"
+alwaysApply: false
+---
+
+# Update mocks (same Figma file)
+
+**Never spin a new file** for ongoing client project — extend existing file. Match existing polish.
+
+**Before `use_figma`:** `figma-use` + `figma-generate-design`. Sequential `use_figma`.
+
+## Inputs
+
+**Existing file URL** (`fileKey`). Ask if missing. Clear change list.
+
+## 1 — Audit (mandatory)
+
+Inspect pages/names/counts. Collect **design DNA**: wrapper width; color/text/effect variables + styles; components (nav/footer/buttons/cards); spacing rhythm; naming patterns. Optional `use_figma` snippet to list pages if helpful.
+
+Summarize DNA → **user confirms** before build.
+
+## 2 — Plan
+
+**New pages:** sections needed; map to existing patterns/components; realistic copy (no lorem); flag rare new components → approve first.
+
+**Edits:** target node ids; text swap vs layout vs swap variants vs insert/remove section — minimize rebuild.
+
+Present plan → approve.
+
+## 3 — Build new pages
+
+New page name matches conventions. Wrapper width/layout matches file. Section-by-section:
+
+- Start from closest existing section pattern; reuse instances + variables
+- Vary layouts (do not repeat same archetype >2×): media/text alternation, grids, quotes, stats, CTA band, icon grids, timeline, tables, FAQ, team/portfolio, etc.
+- Imagery placeholders show intent/ratio
+- Interactive states like library
+- Mobile **375px** if other pages have mobile
+
+After each section: screenshot — variables bound, styles applied, no clip, descriptive layer names.
+
+## 4 — Modify existing pages
+
+Locate nodes (`get_metadata` / read `use_figma`). Prefer edit auto-layout, `swapComponent`, text/style updates; insert/remove sections deliberately. Full-page screenshot after — check reflow around edit.
+
+## 5 — Final check
+
+Screenshot all touched pages; compare to untouched pages for consistency; page order sane; no orphaned junk frames.
+
+Present screenshots + summary + open questions.
+
+## New DS elements
+
+Only if nothing fits — justify, **get approval**, mirror naming/structure, document on Foundations, bind to existing variables — no rogue hex.
+
+## Anti-patterns
+
+New file for update; off-palette fonts/colors; hardcode when variable/style exists; "lite" page vs rest of file; skip audit; rebuild untouched sections; default layer names; lorem; mobile skipped if file uses mobile; add DS pieces without approval.

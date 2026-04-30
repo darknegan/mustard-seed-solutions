@@ -1,0 +1,32 @@
+---
+description: "Compress memory markdown/text to caveman prose; triggers — /caveman:compress path, compress memory file"
+alwaysApply: false
+---
+
+# Compress memory files (.md, .txt)
+
+Goal: shorter token footprint; **preserve** technical truth, code, URLs, structure.
+
+## Allowed targets
+
+Natural language: `.md`, `.txt`, extensionless prose. **Never** compress: `.py`, `.js`, `.ts`, `.json`, `.yaml`, `.yml`, `.toml`, `.env`, `.lock`, `.css`, `.html`, `.xml`, `.sql`, `.sh`.
+
+Skip `*.original.md` backups.
+
+## If repo has compressor CLI
+
+Skill lived beside `scripts/`. If present: `cd <that-dir> && python3 -m scripts <absolute_filepath>` — CLI validates/retries; on failure leave original.
+
+If **no** CLI in workspace: compress in-editor using rules below; save backup as `<name>.original.md` before overwrite.
+
+## Strip from prose
+
+Articles; filler (just/really/basically…); pleasantries; hedging; fluff connectors. Prefer imperatives. Merge duplicate bullets.
+
+## Preserve exactly
+
+Markdown fenced code blocks — verbatim order, spacing, comments. Inline backtick spans. URLs, paths, commands, env vars, versions, proper nouns, heading text, list nesting, tables (compress cell text only if meaning intact), YAML frontmatter structure.
+
+## Critical
+
+Do not alter anything inside fences or backticks. Compress only outside code regions.

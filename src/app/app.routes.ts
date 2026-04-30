@@ -5,6 +5,7 @@ import { Home } from './home/home';
 import { ProcessPageComponent } from './process/process-page';
 import { SolutionsPageComponent } from './solutions/solutions-page';
 import { redirectToDashboardIfLoggedInGuard } from './shared/guards/redirect-to-dashboard-if-logged-in.guard';
+import { requireAuthGuard } from './shared/guards/require-auth.guard';
 
 // Public marketing routes stay eager; portal routes are loaded only when clients need them.
 export const routes: Routes = [
@@ -39,6 +40,8 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard-page').then((m) => m.DashboardPageComponent),
+    canActivate: [requireAuthGuard],
+    canActivateChild: [requireAuthGuard],
     title: 'Client dashboard — Mustard Seed Solutions',
     data: { hideChrome: true },
     children: [

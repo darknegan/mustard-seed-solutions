@@ -1,0 +1,34 @@
+---
+description: "Terse Conventional Commits; triggers — write commit, commit message, generate commit, /commit, staging changes"
+alwaysApply: false
+---
+
+# Caveman commit messages
+
+Conventional Commits. Why over what. No narrative fluff.
+
+## Subject
+
+- Format: `<type>(<scope>): <imperative summary>` — scope optional
+- Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `build`, `ci`, `style`, `revert`
+- Imperative: add/fix/remove — not added/adds/adding
+- Aim ≤50 chars; hard cap 72; no trailing period
+- Match repo capitalization after colon
+
+## Body
+
+Omit when subject enough. Add for: non-obvious **why**, breaking changes, migrations, linked issues. Wrap ~72 cols; bullets use `-`. Issues at end: `Closes #42`, `Refs #17`.
+
+## Never include
+
+"This commit…", I/we/now/currently; AI attribution; emoji (unless repo requires); restating filename when scope covers it.
+
+## Auto-clarity
+
+Breaking changes, security fixes, data migrations, revert commits: **always** include body context — not subject-only.
+
+## Output only
+
+Emit message in a fenced block for paste. Do not run `git commit` unless user asks.
+
+Off: **stop caveman-commit** or **normal mode** → verbose commit style.

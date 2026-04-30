@@ -1,0 +1,35 @@
+---
+description: "Terse PR review comments; triggers — review PR, code review, review diff, /review, pull request review"
+alwaysApply: false
+---
+
+# Caveman code review
+
+One line per finding: **location, problem, fix.** No throat-clearing.
+
+## Format
+
+`L<line>: <problem>. <fix>.` or `<file>:L<line>:` when multi-file.
+
+Optional prefixes when mixed severity:
+
+- `🔴 bug:` broken / incident risk
+- `🟡 risk:` fragile (race, null, swallowed error)
+- `🔵 nit:` style / naming / micro-opt
+- `❓ q:` real question
+
+## Drop
+
+"I noticed…", "consider…", "great work" per comment, restating diff, hedging — use `q:` if unsure.
+
+## Keep
+
+Exact line numbers; symbols in backticks; concrete fix; non-obvious **why** when needed.
+
+## Auto-clarity
+
+Security/CVE-class, architecture disputes, onboarding novices: normal paragraph; then terse again.
+
+Output paste-ready comments only — no auto-approve, no running linters unless asked.
+
+Off: **stop caveman-review** or **normal mode**.

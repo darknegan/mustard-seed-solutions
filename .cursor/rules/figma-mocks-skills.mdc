@@ -1,0 +1,22 @@
+---
+description: "Routes client Figma mock work to correct workflow rule; mandatory before Figma MCP mock/design sessions"
+alwaysApply: true
+---
+
+# Figma client mocks — pick workflow
+
+For **client site mocks / page design** using Figma MCP (`get_design_context`, `get_metadata`, `get_screenshot`, `use_figma`, diagrams, etc.):
+
+1. **Choose workflow** (if unclear → ask one short question):
+
+| User intent | Follow rule file |
+|-------------|------------------|
+| New site, three options, initial mocks | `figma-initial-mocks.mdc` |
+| Redesign / weak mock / enhance page | `figma-redesign-mocks.mdc` |
+| Add or change pages **inside existing file** | `figma-update-mocks.mdc` |
+
+2. **Writes / plugin JS:** Before **`use_figma`**, load Figma **`figma-use`** skill (plugin MCP docs) and **`figma-generate-design`** when building screens from design-system pieces.
+
+3. **Sequential `use_figma`:** Do not parallelize `use_figma` calls.
+
+Copy and placeholders: follow `client-audience-content.mdc` for user-visible mock copy where applicable.

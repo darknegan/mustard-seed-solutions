@@ -1,0 +1,45 @@
+---
+description: "Elevate weak Figma mocks; redesign page, doesn't look good, enhance mock, improve design, redo section"
+alwaysApply: false
+---
+
+# Redesign existing Figma mocks
+
+Improve layout, hierarchy, richness **inside same brand**. Do **not** rebrand.
+
+**Before `use_figma`:** `figma-use` + `figma-generate-design`. Sequential `use_figma`.
+
+## Inputs
+
+Figma URL; which page/section; what feels wrong (optional).
+
+## 1 — Diagnose
+
+- `get_screenshot` full page + weak sections; `get_metadata` for structure
+- Score: hierarchy, layout variety, whitespace, color use, typography, richness, copy, components/states, imagery, mobile
+- Map symptoms → root causes (flat → depth/vary sections; cluttered → whitespace/hierarchy; generic → theme decoration; weak CTA → accent/isolation; etc.)
+- Present: screenshot, **keep** list, **fix** list, approach (full rebuild vs targeted). **Approve before edits.**
+
+## 2 — Design DNA
+
+Extract from file: color variables, text/effect styles, components, spacing rhythm, wrapper width, personality (radius, shadows, gradients). **Redesign uses same tokens.**
+
+## 3 — Execute
+
+**Full rebuild:** rename old page `[Name] (Previous)`; new page same name; rebuild sections using DS.
+
+**Targeted:** rebuild weak sections by node id in place; verify auto-layout neighbors.
+
+**Techniques:** stronger type ladder; accent only on key CTAs; layered cards/shadows; alternating section archetypes (split/full-bleed/centered hero; feature grid; alternating rows; testimonial; stats bar; CTA band; carousel/grid; timeline; pricing table; FAQ; logos; full-bleed image; signup); benefit headlines; hover states; intentional image ratios.
+
+## 4 — Validate
+
+Per-section screenshots; full-page before/after; cross-page still same family.
+
+## 5 — Present
+
+Before/after; what changed + why; prior saved as `(Previous)`; ask tweaks.
+
+## Anti-patterns
+
+Change palette/fonts/tokens arbitrarily; delete original without `(Previous)`; skip diagnosis; simplify instead of elevate; identical sections; lorem; drop mobile if file had mobile; new components before adapting existing.
