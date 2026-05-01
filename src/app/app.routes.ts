@@ -13,7 +13,8 @@ export const routes: Routes = [
     path: '',
     component: Home,
     canActivate: [redirectToDashboardIfLoggedInGuard],
-    title: 'Mustard Seed Solutions — Websites that earn trust and generate real leads',
+    title:
+      'Mustard Seed Solutions — Websites for shops, churches, nonprofits & teams that earn trust',
   },
   {
     path: 'solutions',

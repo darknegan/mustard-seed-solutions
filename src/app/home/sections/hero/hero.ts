@@ -18,9 +18,9 @@ interface HeroStat {
 export class HeroComponent implements OnInit, OnDestroy {
   protected readonly rotatingPhrases: readonly string[] = [
     'earn trust',
-    'book more calls',
-    'capture more leads',
-    'feel unmistakably yours',
+    'load fast',
+    'welcome visitors',
+    "show what's next",
   ];
 
   protected readonly activePhraseIndex = signal(0);

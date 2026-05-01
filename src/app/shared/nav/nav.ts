@@ -23,8 +23,8 @@ export class NavComponent {
 
   protected readonly links: readonly NavLink[] = [
     { label: 'Home', href: '/' },
-    { label: 'Process', href: '/process' },
     { label: 'About', href: '/about' },
+    { label: 'Process', href: '/process' },
     { label: 'Solutions', href: '/solutions' },
   ];
 

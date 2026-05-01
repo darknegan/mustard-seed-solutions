@@ -61,10 +61,12 @@ export class SolutionsComponent {
     {
       id: 'launch',
       name: 'Launch',
-      tagline: 'A professional first site for new businesses or anyone replacing a DIY page.',
+      tagline:
+        'A professional first site for new ventures — shops, ministries, nonprofits — or anyone replacing a DIY page.',
       price: '$2,400–$3,800',
       priceNote: 'one-time · 2–4 weeks',
-      idealFor: 'Solo owners, new businesses, and anyone ready to look legit online.',
+      idealFor:
+        'Solo leaders, small teams, new organizations, and anyone ready to look trustworthy online.',
       timeline: 'Start to go-live in about 2–4 weeks',
       highlights: [
         'Clear message & simple site map',
@@ -77,7 +79,7 @@ export class SolutionsComponent {
         'Layout sketches + one round of design',
         'Help with what to say and which reviews or proof to show',
         'Set up so Google can understand and list your pages',
-        'Google Business Profile setup (when it fits your business)',
+        'Google Business Profile setup (when it fits what you do)',
         'Launch checklist + 30 days of fixes if something is wrong',
       ],
       cta: 'Start with Launch',
@@ -86,10 +88,12 @@ export class SolutionsComponent {
     {
       id: 'growth',
       name: 'Growth',
-      tagline: 'For businesses ready to turn more site visitors into calls, leads, and bookings.',
+      tagline:
+        'For teams ready to turn more visitors into real action — calls, signups, registrations, and bookings.',
       price: '$4,500–$7,500',
       priceNote: 'one-time · 4–8 weeks',
-      idealFor: 'Established businesses investing in more leads and stronger local search.',
+      idealFor:
+        'Established shops, churches, and nonprofits investing in clearer paths for visitors and stronger local visibility.',
       timeline: 'Start to go-live in about 4–8 weeks',
       highlights: [
         'Everything in Launch',
@@ -115,7 +119,8 @@ export class SolutionsComponent {
       tagline: 'Heavier builds: multiple services, multiple locations, or a growing brand.',
       price: '$8,000–$12,000+',
       priceNote: 'one-time build · price matches the scope',
-      idealFor: 'Multiple locations, franchises, ministries, or businesses with a lot to show.',
+      idealFor:
+        'Multiple locations, campuses, franchises, ministries, or organizations with a lot to show.',
       timeline: 'Start to go-live in about 6–12 weeks',
       highlights: [
         'Everything in Growth',
@@ -161,7 +166,7 @@ export class SolutionsComponent {
       name: 'Pro',
       price: '$279–$449',
       priceNote: '/ month',
-      summary: 'Your site keeps up as your business changes — with room to try new ideas.',
+      summary: 'Your site keeps up as you grow — with room to try new ideas.',
       includedHours: '2 hours / month for design and build work',
       responseTime: 'Within 24 hours (business week)',
       features: [
@@ -181,7 +186,7 @@ export class SolutionsComponent {
       name: 'Growth',
       price: '$499–$899+',
       priceNote: '/ month',
-      summary: 'A web partner in your corner for ongoing campaigns and steady growth.',
+      summary: 'A web partner in your corner for ongoing campaigns, seasons, and steady growth.',
       includedHours: '5+ hours / month of new work',
       responseTime: 'Same business day (Monday–Friday)',
       features: [

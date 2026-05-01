@@ -33,20 +33,21 @@ export class ProcessComponent {
     {
       number: '01',
       title: 'Discover',
-      kicker: 'We learn your business before we design anything.',
+      kicker: 'We learn how you work before we design anything.',
       duration: 'Week 1 · ~3 hours of your time',
       accent: 'sky',
       icon: 'pi pi-compass',
       summary:
-        'Before layouts or a single line of code, we get clear on what makes you different. Who your customers are, what makes them choose you (or hesitate), what other businesses in your space are doing, and what you want the next few months to look like if the site is doing its job.',
+        'Before layouts or a single line of code, we get clear on what makes you different. Who you serve, what helps people say yes (or hesitate), what others like you are doing online, and what you want the next few months to look like if the site is doing its job.',
       deliverables: [
         'Free 20-minute intro call to see if we are a fit',
         'Guided planning session (about 60–90 minutes)',
         'Simple worksheet: goals and how we will measure them',
-        'Plain-language look at your competitors',
+        'Plain-language look at others in your space',
         'First pass at your main messages: what to say, in what order',
       ],
-      yourJob: 'Share how your business really runs — the wins, the struggles, and where you want to go.',
+      yourJob:
+        'Share how things really run — the wins, the struggles, and where you want to go.',
       myJob: 'Ask the questions your last website person may not have asked, and turn it into a plan you can follow.',
       artifact: {
         label: 'Discovery brief',
@@ -100,10 +101,11 @@ export class ProcessComponent {
         'Home page plus two other key pages, designed in detail',
         'How the same pages look on a phone, not just a desktop',
         'A clickable preview you can tap through and review',
-        'Short recorded walkthrough: why the design choices help your customers',
+        'Short recorded walkthrough: why the design choices help people you serve',
       ],
       yourJob: 'Say what you think. “I do not love this part” helps — tell us why, and we will adjust.',
-      myJob: 'Push back on choices that would hurt your customers, stay flexible on personal taste. No ego.',
+      myJob:
+        'Push back on choices that would confuse or frustrate visitors, stay flexible on personal taste. No ego.',
       artifact: {
         label: 'Design preview',
         lines: [
@@ -122,13 +124,13 @@ export class ProcessComponent {
       accent: 'sky',
       icon: 'pi pi-code',
       summary:
-        'The site is built by hand for your business — not a generic template site builder. That means it loads quickly, works well for people who use screen readers or keyboard navigation, and is set up so search engines can understand your pages. You end up with something you can hand off to another developer later if you ever need to: clean, professional work.',
+        'The site is built by hand for your organization — not a generic template site builder. That means it loads quickly, works well for people who use screen readers or keyboard navigation, and is set up so search engines can understand your pages. You end up with something you can hand off to another developer later if you ever need to: clean, professional work.',
       deliverables: [
         'A site that works on computer, tablet, and phone',
         'Checked for readability and accessibility (including for visitors who rely on assistive tech)',
         'Tuned for fast load times so people do not bounce',
         'Page titles, descriptions, and behind-the-scenes tags so Google can list you properly',
-        'Your forms, calendar, and customer tools connected the way we planned',
+        'Your forms, calendar, and day-to-day tools connected the way we planned',
       ],
       yourJob: 'Send text, photos, and feedback in our weekly check-in. Quicker answers usually mean a quicker launch.',
       myJob: 'Show you a real working preview every week. No “we are still working on it” black hole.',
@@ -158,7 +160,8 @@ export class ProcessComponent {
         'Basic visit and goal tracking set up (so you can see what is working)',
         'Recorded training: how to update text, add photos, and who to call if something breaks',
       ],
-      yourJob: 'Choose a launch window that works for you, tell your customers if you like, and enjoy the moment.',
+      yourJob:
+        'Choose a launch window that works for you, tell people you serve if you like, and enjoy the moment.',
       myJob: 'Handle the technical switch and stay available for the first couple of days in case anything needs a tweak.',
       artifact: {
         label: 'Launch checklist',
@@ -186,7 +189,7 @@ export class ProcessComponent {
         'Ideas for new copy or small SEO tweaks, based on what we see',
         'Optional: handoff to a monthly care plan if you want ongoing help',
       ],
-      yourJob: 'Tell us what is working, what is not, and what you are hearing from customers.',
+      yourJob: 'Tell us what is working, what is not, and what you are hearing from people you serve.',
       myJob: 'Adjust based on what the numbers and feedback show — not hunches — and help you plan what is next.',
       artifact: {
         label: '30-day review',
