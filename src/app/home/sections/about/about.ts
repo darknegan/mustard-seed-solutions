@@ -1,15 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AvatarModule } from 'primeng/avatar';
-import { RatingModule } from 'primeng/rating';
 
-interface AboutStat {
-  readonly value: string;
-  readonly label: string;
-}
-
-interface AboutValue {
-  readonly icon: string;
+interface AboutFeature {
   readonly title: string;
   readonly description: string;
 }
@@ -17,38 +8,30 @@ interface AboutValue {
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [AvatarModule, RatingModule, FormsModule],
+  imports: [],
   templateUrl: './about.html',
   styleUrl: './about.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AboutComponent {
-  protected readonly rating = 5;
+  protected readonly profileSrc: string = '/Profile Pic.webp';
+  protected readonly profileAlt: string = 'Drake, founder of Mustard Seed Solutions';
 
-  protected readonly stats: readonly AboutStat[] = [
-    { value: '10+ yrs', label: 'Building sites & software' },
-    { value: '100%', label: 'Local & faith-rooted' },
-    { value: '1:1', label: 'You talk to the person who builds it' },
-  ];
-
-  protected readonly values: readonly AboutValue[] = [
+  protected readonly features: readonly AboutFeature[] = [
     {
-      icon: 'pi pi-heart',
-      title: 'Integrity first',
+      title: 'Why I love building websites',
       description:
-        'Honest scope. Honest pricing. Honest timelines. If something changes, you hear it from me first.',
+        'Fast pages, plain words, and layouts built around what you want visitors to do next—calls, signups, volunteer forms, online giving, events, or bookings. I work with small businesses, churches, nonprofits, and other teams who need a site that fits their needs.',
     },
     {
-      icon: 'pi pi-users',
-      title: 'Relationship over transaction',
+      title: 'Faith shapes how I build',
       description:
-        "I'd rather build one great thing for you than ten forgettable ones. I answer my own email.",
+        "Following Jesus shapes my integrity, timelines, and follow-through. I'm grateful for clients who trust me with their story online.",
     },
     {
-      icon: 'pi pi-check-circle',
-      title: 'Craft that lasts',
+      title: 'The Extra Mile',
       description:
-        'Fast, easy to use, and built to stay that way — so your site still feels sharp in five years.',
+        "When we're close to launch and something still feels off, we polish it. You get thoroughness—not a handoff and disappear.",
     },
   ];
 }
