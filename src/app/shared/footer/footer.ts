@@ -44,7 +44,10 @@ export class FooterComponent {
     {
       title: 'Contact',
       links: [
-        { label: 'hello@mustardseed.solutions', href: 'mailto:hello@mustardseed.solutions' },
+        {
+          label: 'drake@mustard-seed-solutions.com',
+          href: 'mailto:drake@mustard-seed-solutions.com',
+        },
         { label: 'Book a call', href: '/#contact' },
         { label: 'Northwest Arkansas', href: '/about' },
       ],
