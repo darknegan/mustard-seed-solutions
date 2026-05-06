@@ -4,7 +4,9 @@
 
 .hero {
   position: relative;
-  overflow: hidden;
+  /* visible so long nowrap headline phrase can extend past grid column without clipping */
+  overflow-x: visible;
+  overflow-y: hidden;
   min-height: clamp(720px, 92vh, 980px);
   padding-block: 24px 120px;
   isolation: isolate;
@@ -128,6 +130,18 @@
   50% { opacity: 1; transform: scale(1.6); }
 }
 
+/* Opacity-only twinkle — avoids scale() on many SVG circles (lighter on mobile GPUs). */
+@keyframes hero-twinkle-lite {
+  0%, 100% { opacity: 0.38; }
+  50% { opacity: 0.95; }
+}
+
+/* Halo pulse without scale — scaling blurred layers is expensive on low-end GPUs. */
+@keyframes hero-halo-pulse-opacity {
+  0%, 100% { opacity: 0.48; }
+  50% { opacity: 0.88; }
+}
+
 .hero__beam {
   animation: hero-beam 9s linear infinite;
 }
@@ -149,19 +163,26 @@
   z-index: 1;
   display: grid;
   grid-template-columns: 1.05fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.hero__copy {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
+  grid-template-rows: auto auto;
+  column-gap: 80px;
+  row-gap: 28px;
+  align-items: start;
 }
 
 .hero__heading {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
   color: var(--mss-text-primary);
-  max-width: 680px;
+}
+
+.hero__rest {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
 }
 
 .hero__heading em {
@@ -171,18 +192,9 @@
 }
 
 .hero__phrase {
-  display: inline-grid;
+  display: inline;
   vertical-align: text-bottom;
-  min-width: 0;
-}
-
-.hero__phrase-item {
-  grid-area: 1 / 1;
-  place-self: start start;
   white-space: nowrap;
-  opacity: 0;
-  transform: translateY(10px);
-  pointer-events: none;
   color: transparent;
   background: linear-gradient(90deg, var(--mss-sky) 0%, #a78bfa 50%, var(--mss-orange) 100%);
   background-size: 200% 100%;
@@ -190,14 +202,6 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: hero-phrase-shimmer 6s linear infinite;
-  transition:
-    opacity 0.5s ease,
-    transform 0.5s ease;
-}
-.hero__phrase-item.is-active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
 }
 
 @keyframes hero-phrase-shimmer {
@@ -254,14 +258,18 @@
 
 /* Wrapper keeps the square stage clear — HUDs sit in flow below, not over the seed. */
 .hero__stage-wrap {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: center;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 20px;
   width: 100%;
   max-width: 620px;
-  margin-inline: auto;
-  margin-top: -28px;
+  margin-inline: 0;
+  margin-top: 0;
+  justify-self: stretch;
 }
 
 .hero__stage {
@@ -949,14 +957,91 @@
 
 @media (max-width: 1100px) {
   .hero__inner {
-    grid-template-columns: 1fr;
-    gap: 64px;
+    grid-template-columns: minmax(0, 1fr) clamp(136px, 37vw, 252px);
+    grid-template-rows: auto auto;
+    column-gap: clamp(16px, 4.5vw, 32px);
+    row-gap: clamp(24px, 4vw, 32px);
+    align-items: start;
   }
+
+  /* Top-align so the orb sits with the headline block instead of centered on 4–5 lines of display type. */
+  .hero__heading {
+    align-self: start;
+    max-width: none;
+    min-width: 0;
+    padding-inline-end: clamp(0px, 1vw, 8px);
+    overflow-wrap: break-word;
+  }
+
   .hero__stage-wrap {
-    max-width: 520px;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    justify-self: end;
+    width: 100%;
+    max-width: min(100%, clamp(200px, 37vw, 252px));
+    margin-top: 0;
+    /* Default ≤1100: keep row 1 short so summary isn’t stranded under a tall stage column. */
+    padding-top: clamp(12px, 2.5vw, 32px);
   }
+
+  .hero__rest {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
   .hero__stats {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/*
+ * Narrow laptop (901–1100): same grid topology as desktop — stage spans headline + summary,
+ * vertically centered beside the full copy stack. Avoids a small orb trapped top-right on row 1 only.
+ */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, min(36vw, 380px));
+    grid-template-rows: auto auto;
+    column-gap: clamp(28px, 4.5vw, 52px);
+    row-gap: clamp(22px, 3.5vw, 30px);
+    align-items: start;
+  }
+
+  .hero__heading {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    padding-inline-end: clamp(8px, 2vw, 20px);
+    max-width: none;
+    overflow-x: visible;
+  }
+
+  .hero__rest {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    width: 100%;
+    max-width: min(100%, 580px);
+  }
+
+  .hero__stage-wrap {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    align-self: center;
+    justify-self: center;
+    width: min(100%, min(36vw, 380px));
+    max-width: min(100%, 380px);
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
+
+/* Phones + small tablets: extra top inset on stage (optical); ≤900 only so laptops aren’t affected.
+   (≤640 overrides below with tighter phone values; this band is mostly tablet + large phone.) */
+@media (max-width: 900px) {
+  .hero__stage-wrap {
+    padding-top: clamp(132px, 21vw, 252px);
   }
 }
 
@@ -965,9 +1050,15 @@
     padding-block: 32px 96px;
     min-height: auto;
   }
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr) clamp(118px, 34vw, 172px);
+    column-gap: clamp(12px, 3.5vw, 18px);
+    row-gap: 24px;
+  }
   .hero__stage-wrap {
-    max-width: 380px;
-    margin-top: -16px;
+    max-width: min(100%, 172px);
+    margin-top: 0;
+    padding-top: clamp(72px, 12vw, 120px);
   }
   .hero__seed {
     width: 52%;
@@ -1002,7 +1093,208 @@
   .hero__scroll-line {
     animation: none !important;
   }
-  .hero__phrase-item {
-    transition: none;
+  .hero__phrase {
+    animation: none !important;
+  }
+}
+
+/* ===================== PHONE + SMALL TABLET (perf tier only) =====================
+   ≤900px: lighter backdrop/stage (no grid pan, scan, sweep, streaks, fine rays…).
+   Seed keeps grow + glyphs; orb dot twinkle off; halos opacity-only; trimmed glow.
+  901px+: base stylesheet = full desktop hero FX (incl. narrow laptop @ 901–1100). */
+@media (max-width: 900px) {
+  .hero__aurora {
+    filter: blur(72px);
+    will-change: transform;
+  }
+  .hero__aurora--sky {
+    animation: hero-drift-a 22s ease-in-out infinite;
+  }
+  .hero__aurora--orange {
+    animation: hero-drift-b 28s ease-in-out infinite;
+  }
+  .hero__aurora--violet {
+    animation: hero-drift-c 34s ease-in-out infinite;
+  }
+
+  /* Repainting grid background-position every frame is costly — keep art, drop pan. */
+  .hero__grid {
+    animation: none;
+  }
+
+  .hero__scanline {
+    display: none;
+  }
+
+  .hero__stars circle {
+    animation: hero-twinkle-lite 5.5s ease-in-out infinite;
+    transform: none;
+  }
+  .hero__stars circle:nth-child(3n) {
+    animation-duration: 6.5s;
+  }
+  .hero__stars circle:nth-child(3n + 1) {
+    animation-duration: 5s;
+  }
+
+  .hero__beam {
+    animation-duration: 20s;
+  }
+  .hero__beam--a {
+    animation-duration: 24s;
+  }
+  .hero__beam--b {
+    animation-duration: 28s;
+  }
+  .hero__beam--c {
+    animation-duration: 18s;
+  }
+
+  .hero__halo {
+    will-change: opacity;
+  }
+  .hero__halo--outer {
+    animation: hero-halo-pulse-opacity 10s ease-in-out infinite;
+    filter: blur(28px);
+  }
+  .hero__halo--mid {
+    animation: hero-halo-pulse-opacity 7.5s ease-in-out infinite 0.8s;
+    filter: blur(22px);
+  }
+  .hero__halo--inner {
+    animation: hero-halo-pulse-opacity 5.5s ease-in-out infinite 0.3s;
+    filter: blur(16px);
+  }
+
+  .hero__rays--fine {
+    display: none;
+  }
+  .hero__rays--coarse {
+    animation: hero-spin 72s linear infinite;
+    filter: none;
+    opacity: 0.62;
+  }
+
+  .hero__sweep {
+    display: none;
+  }
+
+  .hero__wave--2,
+  .hero__wave--3 {
+    display: none;
+  }
+  .hero__wave--1 {
+    animation: hero-wave 7.5s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+  }
+
+  .hero__orb {
+    animation: hero-spin 48s linear infinite;
+  }
+  .hero__orb--near {
+    animation-duration: 30s;
+  }
+  .hero__orb--mid {
+    animation-duration: 56s;
+  }
+  .hero__orb--far {
+    animation-duration: 72s;
+  }
+  .hero__orb > span::before {
+    animation: none;
+    opacity: 0.92;
+    transform: scale(1);
+  }
+
+  .hero__streaks {
+    display: none;
+  }
+
+  .hero__orbit--far {
+    animation: hero-spin 96s linear infinite;
+  }
+  .hero__orbit--mid {
+    animation: hero-spin 72s linear infinite reverse;
+  }
+  .hero__orbit--near {
+    animation: hero-spin 40s linear infinite;
+  }
+
+  .hero__seed {
+    animation: hero-seed-float 8.5s ease-in-out infinite;
+  }
+
+  .hero__seed-aura {
+    animation: hero-seed-aura 5.5s ease-in-out infinite;
+    filter: blur(10px);
+  }
+
+  .hero__seed-ring {
+    animation: hero-seed-ring-spin 26s linear infinite;
+  }
+
+  .hero__seed-tilt {
+    animation: hero-seed-tilt 11s ease-in-out infinite;
+  }
+
+  .hero__seed-logo {
+    animation: hero-seed-grow 12s ease-in-out infinite;
+    filter:
+      drop-shadow(0 0 16px rgba(251, 146, 60, 0.55))
+      drop-shadow(0 0 12px rgba(251, 191, 36, 0.45))
+      drop-shadow(0 0 28px rgba(56, 189, 248, 0.35));
+  }
+
+  .hero__phrase {
+    animation: hero-phrase-shimmer 14s linear infinite;
+  }
+
+  .hero__scroll-line {
+    animation: hero-scroll-line 3.2s ease-in-out infinite;
+  }
+}
+
+/* Mobile S / M (≤480px): no backdrop or stage — copy-only hero (still uses section gradient bg). */
+@media (max-width: 480px) {
+  .hero {
+    min-height: auto;
+    padding-block: clamp(28px, 8vw, 40px) clamp(56px, 14vw, 88px);
+  }
+
+  .hero__backdrop,
+  .hero__stage-wrap {
+    display: none !important;
+  }
+
+  .hero__inner {
+    grid-template-columns: 1fr;
+    row-gap: clamp(20px, 5vw, 28px);
+  }
+
+  .hero__heading {
+    grid-column: 1;
+    grid-row: 1;
+    padding-inline-end: 0;
+    max-width: none;
+  }
+
+  .hero__rest {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: none;
+  }
+
+  .hero__phrase {
+    animation: none !important;
+  }
+
+  .hero__scroll {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .hero__halo,
+  .hero__orbit {
+    display: none;
   }
 }

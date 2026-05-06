@@ -49,7 +49,7 @@ export class FooterComponent {
           href: 'mailto:drake@mustard-seed-solutions.com',
         },
         { label: 'Book a call', href: '/#contact' },
-        { label: 'Northwest Arkansas', href: '/about' },
+        { label: 'Arkansas-based · serving nationwide', href: '/about' },
       ],
     },
   ];

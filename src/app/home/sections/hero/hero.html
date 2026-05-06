@@ -50,54 +50,13 @@
   </div>
 
   <div class="mss-container hero__inner">
-    <div class="hero__copy">
-      <h1 id="hero-heading" class="mss-display-xl hero__heading">
-        Websites built to
-        <span class="hero__phrase" aria-live="polite">
-          @for (phrase of rotatingPhrases; track phrase; let i = $index) {
-            <span class="hero__phrase-item" [class.is-active]="i === activePhraseIndex()">
-              {{ phrase }}
-            </span>
-          }
-        </span>
-        <br />
-        for small teams that <em>mean</em> business.
-      </h1>
-
-      <p class="mss-body-lg mss-text-secondary hero__lede">
-        Most people meet your work online before they ever decide to reach out.
-        We build sites and software with that in mind—quick loads, pages that read cleanly on every screen,
-        and clear next steps that line up with what you want people to do—not a dead end.
-        When we wrap, your accounts and files stay yours—and if you want new features or changes later,
-        we can pick those up when you&rsquo;re ready.
-      </p>
-
-      <div class="hero__ctas">
-        <p-button
-          label="Book a free intro call"
-          icon="pi pi-arrow-right"
-          iconPos="right"
-          size="large"
-          styleClass="mss-btn-primary"
-          [rounded]="true"
-        />
-        <a
-          routerLink="/solutions"
-          class="p-button p-component p-button-lg mss-btn-ghost"
-        >
-          Explore our solutions
-        </a>
-      </div>
-
-      <dl class="hero__stats">
-        @for (stat of stats; track stat.label) {
-          <div class="hero__stat">
-            <dt class="hero__stat-value">{{ stat.value }}</dt>
-            <dd class="hero__stat-label">{{ stat.label }}</dd>
-          </div>
-        }
-      </dl>
-    </div>
+    <h1 id="hero-heading" class="mss-display-xl hero__heading">
+      Websites built to
+      <span class="hero__phrase" aria-live="polite">{{ activePhraseText() }}</span>
+      <br />
+      for small teams<br />
+      that <em>mean</em> business.
+    </h1>
 
     <div class="hero__stage-wrap" aria-hidden="true">
       <div class="hero__stage">
@@ -315,6 +274,42 @@
         </div>
       </div>
 
+    </div>
+
+    <div class="hero__rest">
+      <p class="mss-body-lg mss-text-secondary hero__lede">
+        Most people meet your work online before they ever decide to reach out.
+        We build sites and software with that in mind—quick loads, pages that read cleanly on every screen,
+        and clear next steps that line up with what you want people to do—not a dead end.
+        When we wrap, your accounts and files stay yours—and if you want new features or changes later,
+        we can pick those up when you&rsquo;re ready.
+      </p>
+
+      <div class="hero__ctas">
+        <p-button
+          label="Book a free intro call"
+          icon="pi pi-arrow-right"
+          iconPos="right"
+          size="large"
+          styleClass="mss-btn-primary"
+          [rounded]="true"
+        />
+        <a
+          routerLink="/solutions"
+          class="p-button p-component p-button-lg mss-btn-ghost"
+        >
+          Explore our solutions
+        </a>
+      </div>
+
+      <dl class="hero__stats">
+        @for (stat of stats; track stat.label) {
+          <div class="hero__stat">
+            <dt class="hero__stat-value">{{ stat.value }}</dt>
+            <dd class="hero__stat-label">{{ stat.label }}</dd>
+          </div>
+        }
+      </dl>
     </div>
   </div>
 
