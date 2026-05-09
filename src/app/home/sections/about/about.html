@@ -3,9 +3,10 @@
   class="about mss-section mss-section--base mss-section--page-top"
   aria-labelledby="about-heading"
 >
-  <div class="about__decor" aria-hidden="true">
-    <div class="about__decor-blob about__decor-blob--a"></div>
-    <div class="about__decor-blob about__decor-blob--b"></div>
+  <div class="about__bg" aria-hidden="true">
+    <div class="about__bg-grid"></div>
+    <div class="about__bg-glow about__bg-glow--a"></div>
+    <div class="about__bg-glow about__bg-glow--b"></div>
     <div class="about__decor-blob about__decor-blob--c"></div>
     <div class="about__decor-beam about__decor-beam--sky"></div>
     <div class="about__decor-beam about__decor-beam--orange"></div>
@@ -13,24 +14,43 @@
 
   <div class="mss-container about__container">
     <div class="about__inner">
-      <div class="about__left">
-        <span class="mss-eyebrow about__eyebrow">Me · Developer &amp; builder</span>
+      <div class="about__lead">
+        <header class="about__title-block">
+          <span class="mss-eyebrow mss-eyebrow--orange">Me · Developer &amp; builder</span>
 
-        <h1 id="about-heading" class="about__title mss-h1">Small seeds. Strong sites.</h1>
+          <h1 id="about-heading" class="about__title mss-display-lg">
+            <span class="about__title-line">Small seeds.</span>
+            <span class="about__title-accent">Strong sites.</span>
+          </h1>
 
-        <div class="about__rule" aria-hidden="true"></div>
+          <div class="about__rule" aria-hidden="true"></div>
+        </header>
 
         <p class="about__intro mss-body-lg mss-text-secondary">
           I&rsquo;m Drake, a developer who loves building websites that work hard for real people.
           My faith keeps me grounded—honesty, patience, and finishing well. Mustard Seed Solutions is
           named after hope that starts small and grows: the kind of care I bring to every project.
         </p>
+      </div>
 
+      <figure class="about__photo">
+        <div class="about__photo-frame">
+          <img
+            class="about__photo-img"
+            [src]="profileSrc"
+            width="384"
+            height="384"
+            [attr.alt]="profileAlt"
+          />
+        </div>
+      </figure>
+
+      <div class="about__copy-block">
         <ul class="about__features">
-          @for (feature of features; track feature.title) {
-            <li class="about__feat">
+          @for (feature of features; track feature.id) {
+            <li class="about__feat" [attr.data-accent]="feature.accent">
               <div class="about__feat-icon" aria-hidden="true">
-                <span class="about__feat-dot"></span>
+                <i [class]="feature.icon"></i>
               </div>
               <div class="about__feat-copy">
                 <h2 class="about__feat-title mss-h4">{{ feature.title }}</h2>
@@ -41,35 +61,41 @@
         </ul>
       </div>
 
-      <div class="about__right">
-        <figure class="about__photo">
-          <div class="about__photo-frame">
-            <img
-              class="about__photo-img"
-              [src]="profileSrc"
-              width="384"
-              height="384"
-              [attr.alt]="profileAlt"
-            />
-          </div>
-        </figure>
-
-        <aside class="about__scripture" aria-label="Scripture">
-          <div class="about__scripture-spine" aria-hidden="true"></div>
-          <div class="about__scripture-body mss-body-lg">
-            <p class="about__scripture-p">
-              &ldquo;Truly I tell you, if you have faith as small as a mustard seed, you can say to
-              this mountain, &lsquo;Move from here to there,&rsquo; and it will move. Nothing will be
-              impossible for you.&rdquo;
+      <aside class="about__scripture" aria-label="Scripture references">
+        <div class="about__scripture-spine" aria-hidden="true"></div>
+        <div class="about__scripture-hairline" aria-hidden="true"></div>
+        <div class="about__scripture-inner">
+          <blockquote class="about__scripture-quote">
+            <p class="mss-body-lg mss-text-primary">
+              &ldquo;Truly I tell you, if you have faith as small as a
+              <span class="about__scripture-em">mustard seed</span>, you can say to this mountain,
+              &lsquo;Move from here to there,&rsquo; and it will move.
+              <span class="about__scripture-em">Nothing will be impossible for you.</span>&rdquo;
             </p>
-            <p class="about__scripture-cite">— Matthew 17:20</p>
-            <p class="about__scripture-p">
-              &ldquo;If anyone forces you to go one mile, go with him two miles.&rdquo;
+            <footer class="about__scripture-footer">
+              <cite class="about__scripture-cite mss-body-sm mss-text-muted">Matthew 17:20</cite>
+            </footer>
+          </blockquote>
+          <blockquote class="about__scripture-quote">
+            <p class="mss-body-lg mss-text-primary">
+              &ldquo;If anyone forces you to <span class="about__scripture-em">go one mile</span>, go with him
+              <span class="about__scripture-em">two miles</span>.&rdquo;
             </p>
-            <p class="about__scripture-cite">— Matthew 5:41</p>
-          </div>
-        </aside>
-      </div>
+            <footer class="about__scripture-footer">
+              <cite class="about__scripture-cite mss-body-sm mss-text-muted">Matthew 5:41</cite>
+            </footer>
+          </blockquote>
+        </div>
+      </aside>
     </div>
+
+    <dl class="about__stats">
+      @for (s of stats; track s.id) {
+        <div class="about__stat">
+          <dt class="about__stat-value">{{ s.value }}</dt>
+          <dd class="about__stat-label">{{ s.label }}</dd>
+        </div>
+      }
+    </dl>
   </div>
 </section>

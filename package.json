@@ -4,7 +4,7 @@
   "homepage": "https://mustard-seed-solutions.com",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --open",
     "start:server": "npm run dev --prefix server",
     "build": "ng build",
     "build:server": "npm run build --prefix server",
