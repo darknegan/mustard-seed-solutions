@@ -63,7 +63,7 @@ export class SolutionsComponent {
       name: 'Launch',
       tagline:
         'A professional first site for new ventures — shops, ministries, nonprofits — or anyone replacing a DIY page.',
-      price: '$2,400–$3,800',
+      price: '$2,400 – $3,800',
       priceNote: 'one-time · 2–4 weeks',
       idealFor:
         'Solo leaders, small teams, new organizations, and anyone ready to look trustworthy online.',
@@ -90,7 +90,7 @@ export class SolutionsComponent {
       name: 'Growth',
       tagline:
         'For teams ready to turn more visitors into real action — calls, signups, registrations, and bookings.',
-      price: '$4,500–$7,500',
+      price: '$4,500 – $7,500',
       priceNote: 'one-time · 4–8 weeks',
       idealFor:
         'Established shops, churches, and nonprofits investing in clearer paths for visitors and stronger local visibility.',
@@ -117,7 +117,7 @@ export class SolutionsComponent {
       id: 'partner',
       name: 'Partner',
       tagline: 'Heavier builds: multiple services, multiple locations, or a growing brand.',
-      price: '$8,000–$12,000+',
+      price: '$8,000 – $12,000+',
       priceNote: 'one-time build · price matches the scope',
       idealFor:
         'Multiple locations, campuses, franchises, ministries, or organizations with a lot to show.',
@@ -145,7 +145,7 @@ export class SolutionsComponent {
     {
       id: 'essentials',
       name: 'Essentials',
-      price: '$129–$229',
+      price: '$129 – $229',
       priceNote: '/ month',
       summary: 'Keep the site online, safe, and in good shape — without you having to think about it.',
       includedHours: '30 minutes / month for small text or image changes',
@@ -164,7 +164,7 @@ export class SolutionsComponent {
     {
       id: 'pro',
       name: 'Pro',
-      price: '$279–$449',
+      price: '$279 – $449',
       priceNote: '/ month',
       summary: 'Your site keeps up as you grow — with room to try new ideas.',
       includedHours: '2 hours / month for design and build work',
@@ -184,7 +184,7 @@ export class SolutionsComponent {
     {
       id: 'growth',
       name: 'Growth',
-      price: '$499–$899+',
+      price: '$499 – $899+',
       priceNote: '/ month',
       summary: 'A web partner in your corner for ongoing campaigns, seasons, and steady growth.',
       includedHours: '5+ hours / month of new work',

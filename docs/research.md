@@ -1,8 +1,8 @@
 # Marketing pages reference — Home, About, Process, Solutions
 
-Reference for how the **home** (`/`), **about** (`/about`), **process** (`/process`), and **solutions** (`/solutions`) experiences are wired in Angular, how HTML is structured, and how the shared **MSS** theme (CSS variables + utility classes) ties sections together. Use **§3** for **visual layout, enhanced effects, and Figma MCP** alignment; use later sections for code structure and file paths.
+Reference for how the **home** (`/`), **about** (`/about`), **process** (`/process`), **solutions** (`/solutions`), and **client login** (`/login`) experiences are wired in Angular, how HTML is structured, and how the shared **MSS** theme (CSS variables + utility classes) ties sections together. Use **§3** for **visual layout, enhanced effects, and Figma MCP** alignment; use later sections for code structure and file paths.
 
-Implementation alignment notes for `/about` live in [`plans/about.plan.md`](plans/about.plan.md) (atmosphere, typography, feature tiles, scripture card, stats, CTA parity).
+Implementation alignment notes for `/about` live in [`plans/about.plan.md`](plans/about.plan.md) (atmosphere, typography, feature tiles, scripture card, stats, CTA parity). **Login / client portal gate** alignment and phased implementation history live in [`plans/login.plan.md`](plans/login.plan.md); the canonical **runtime + visual spec** for `/login` is **§4.9** below.
 
 ---
 
@@ -22,6 +22,7 @@ Implementation alignment notes for `/about` live in [`plans/about.plan.md`](plan
 - **`'about'`** → `AboutPageComponent` (`src/app/about/about-page.ts`)
 - **`'process'`** → `ProcessPageComponent` (`src/app/process/process-page.ts`)
 - **`'solutions'`** → `SolutionsPageComponent` (`src/app/solutions/solutions-page.ts`)
+- **`'login'`** → **`LoginPageComponent`** (`src/app/login/login-page.ts`) — **lazy-loaded** (`loadComponent`); **`data.hideChrome: true`**; **`redirectToDashboardIfLoggedInGuard`** (logged-in users skip the screen); route **`title`:** `Client sign in — Mustard Seed Solutions` (`app.routes.ts`)
 
 ### Composition pattern (important)
 
@@ -49,6 +50,7 @@ All marketing sections should prefer these variables over hard-coded hex values 
 - **Brand accents:** `--mss-sky`, `--mss-sky-strong`, `--mss-sky-deep`, `--mss-orange`, `--mss-orange-strong`, `--mss-orange-deep`
 - **Radii:** `--mss-radius-sm` … `--mss-radius-2xl`, `--mss-radius-pill`
 - **Layout:** `--mss-container` (1200px content width intent), `--mss-nav-height` (80px)
+- **Destructive / alerts:** `--mss-danger-bg`, `--mss-danger-text`, `--mss-danger-border` (login error banner and shared alert styling — **§4.9.9**)
 
 ### 2.2 Layout primitive: `.mss-container`
 
@@ -509,6 +511,212 @@ Both are **`CanActivateFn`** (functional guards), **`async`**, and **`await auth
 ### 4.8 In-page anchors (contact)
 
 For **in-page anchors**, the **CTA** section sets **`id="contact"`** — that’s what **`/#contact`** targets from nav/footer when forcing Home’s contact band.
+
+---
+
+### 4.9 Login page (`/login`) — client portal gate
+
+**Purpose:** Dedicated **chrome-free** auth surface for clients (`data.hideChrome` — see **§4.1**). Visually aligned with marketing **§3** (dark bands, sky/orange accents, glass-card vocabulary, frosted header) while staying **task-focused**: no hero-grade animation, no global **`app-nav`** / **`app-footer`**. Structured alignment and refactor checklist: [`plans/login.plan.md`](plans/login.plan.md).
+
+**Files:** `src/app/login/login-page.ts`, `login-page.html`, `login-page.scss`
+
+**Component:** **`app-login-page`**, **`standalone: true`**, **`ChangeDetectionStrategy.OnPush`**. **Imports:** **`ReactiveFormsModule`**, **`RouterLink`**, **`ButtonModule`** (PrimeNG **`p-button`**).
+
+---
+
+#### 4.9.1 Routing & guards
+
+| Concern | Detail |
+|--------|--------|
+| Path | **`login`** |
+| Load | **`loadComponent`** → **`LoginPageComponent`** |
+| Chrome | **`data: { hideChrome: true }`** — **`App`** hides **`app-nav`** and **`app-footer`** (**§4.1**) |
+| Guard | **`redirectToDashboardIfLoggedInGuard`** — same as Home **`''`**; authenticated users are redirected to **`/dashboard`** and do not see marketing Home or login |
+| Title | **`Client sign in — Mustard Seed Solutions`** |
+
+**Post-auth navigation:** On successful **`login`** or **`signup`**, **`router.navigate(['/dashboard'])`** (**§4.6** **`requireAuthGuard`** protects portal).
+
+---
+
+#### 4.9.2 Page landmarks & DOM skeleton
+
+**Root:** **`<section class="login-page" aria-labelledby="portal-heading">`** — section accessible name comes from the portal story **`h1`**, not the form card.
+
+**Header:** **`<header class="login-page__nav" aria-label="Login navigation">`** — **not** the global **`app-nav`**; local slim bar only.
+
+**Split shell:** **`<div class="login-page__shell">`** — CSS grid:
+
+- **Desktop:** **`grid-template-columns: minmax(360px, 540px) minmax(0, 1fr)`** — fixed-ish **story column** + fluid **form column**.
+- **`min-height: calc(100dvh - var(--mss-nav-height))`** — fills viewport below the login header.
+
+**Left column:** **`<aside class="login-page__brand-panel" aria-label="Client portal overview">`**
+
+- Decorative stack: **`.login-page__brand-atmosphere`** (**`aria-hidden="true"`**) — grid, glows, beams (**§4.9.4**).
+- Content stack: **`.login-page__brand-content`** — eyebrow, **`h1`**, lede, benefits **`ul`**.
+
+**Right column:** **`<div class="login-page__form-panel">`**
+
+- **`.login-page__form-atmosphere`** (**`aria-hidden="true"`**) — faint grid + blurred orb (**§4.9.6**).
+- **`.login-page__form-inner`** — centers card + error; **`@if (errorMessage())`** alert above **`login-card`**.
+
+**Heading semantics:**
+
+- **One **`h1`:** **`id="portal-heading"`**, classes **`mss-display-lg login-page__headline`**. Line order (with **`<br />`**): **Your site.** → **Your account.** → **Your** + accent span **results** + **.** (word **results** in **`<span class="login-page__headline-accent">`** — **italic**, **`var(--mss-orange-strong)`**, marketing headline accent pattern **§3.4** / **§3.5** without gradient animation).
+- **Form card **`h2`:** **`id="login-heading"`** — **Sign in** or **Create your account** depending on mode. Same **`id`** on both branches (only one mounted); used as local card title, **not** **`aria-labelledby`** on **`<section>`**.
+
+---
+
+#### 4.9.3 Login header — brand parity with global nav (**§4.2**, **§3.3**)
+
+**Brand link:** **`routerLink="/"`**, **`aria-label="Mustard Seed Solutions — Home"`** (SPA return to marketing shell).
+
+**Glyph:** **`/mustard-seed-glyph-logo.svg`** inside **`.login-page__mark`** (**`aria-hidden="true"`**), **`img.login-page__mark-logo`**, **`56×56`** desktop; **`48×48`** at **`max-width: 560px`**. **`filter: drop-shadow(0 0 10px color-mix(in oklab, var(--mss-sky) 34%, transparent))`** — matches **`.nav__mark-logo`** intent.
+
+**Wordmark:** Two-line stack (**`.login-page__wordmark-top`** / **`-bottom`**) — **Mustard Seed** (18px / 16px mobile, **700**, primary text) + **SOLUTIONS** line (11px / 10px mobile, **600**, **`uppercase`**, wide **`letter-spacing`**, secondary color).
+
+**Bar chrome:** **`color-mix(in oklab, var(--mss-bg-base) 82%, transparent)`**, **`backdrop-filter: saturate(140%) blur(18px)`** (+ webkit), **`border-bottom: 1px solid var(--mss-border-subtle)`**, **`height: var(--mss-nav-height)`**, horizontal padding **`clamp(24px, 8vw, 120px)`** (**`24px`** at **`≤900px`**).
+
+**Back link:** **`.login-page__back`**, **`routerLink="/"`**, muted → primary on hover/focus; **`focus-visible`** ring **`2px`** **`--mss-sky`**.
+
+---
+
+#### 4.9.4 Brand panel atmosphere (static decor)
+
+All layers sit under **`.login-page__brand-atmosphere`**, **`pointer-events: none`**, **`z-index: 0`**; **`.login-page__brand-content`** is **`z-index: 1`**. **No infinite motion** — **`prefers-reduced-motion`** does not need to gate layers (unlike Hero **§3.4**).
+
+| Layer | Class | Behavior |
+|-------|--------|----------|
+| Grid | **`.login-page__brand-grid`** | **56×56px** lines, **`rgba(148, 184, 230, 0.05)`**; **`inset: -20%`**; **radial mask** ellipse **85% × 70%** at **50% 18%** (center-top readable fold — same family as About **§3.12**). |
+| Sky glow | **`.login-page__brand-glow--sky`** | **`filter: blur(160px)`**, **`opacity: 0.22`**, **`var(--mss-sky)`**, anchored upper-right. |
+| Orange glow | **`.login-page__brand-glow--orange`** | Same blur/opacity family, **`var(--mss-orange)`**, anchored lower-left. |
+| Violet orb | **`.login-page__brand-glow--violet`** | **`#a78bfa`**, **`opacity: 0.14`**, **`mix-blend-mode: screen`** — principles / About tertiary accent **§3.1**. |
+| Sky beam | **`.login-page__brand-beam--sky`** | **1px** horizontal gradient via **`color-mix(in srgb, var(--mss-sky) …)`**, **`top: 28%`**. |
+| Orange beam | **`.login-page__brand-beam--orange`** | Same, orange mix, **`top: 62%`**. |
+
+**Mobile:** **`max-width: 640px`** — **`.login-page__brand-beam`** **`display: none`** (noise reduction per [`plans/login.plan.md`](plans/login.plan.md)).
+
+**Panel surface:** **`background: var(--mss-bg-surface)`** on **`.login-page__brand-panel`**, **`isolation: isolate`** for blend containment.
+
+---
+
+#### 4.9.5 Typography, eyebrow, benefits (“chips”)
+
+- **Eyebrow:** **`mss-eyebrow mss-eyebrow--orange`** — **Client portal** (**§2.5** orange dot variant).
+- **Lede:** **`mss-body-lg mss-text-secondary`** on **`.login-page__lede`** (**max-width ~420px**).
+- **Benefits:** **`readonly PortalBenefit[]`** in **`login-page.ts`** — **`id` + `label`** for **`@for (benefit of benefits; track benefit.id)`**. Labels: *Real-time project visibility*, *Direct access to your team*, *Site care, visitor numbers, and updates*.
+
+**Benefit row styling (**§3.6 **phase-chip family, lighter weight):**
+
+- **`<li class="login-page__benefit">`** — **`min-height: 48px`**, **`padding: 12px 16px`**, **`border-radius: var(--mss-radius-md)`**, **`border: 1px solid var(--mss-border-subtle)`**, **`background: var(--mss-bg-elevated)`**.
+- **Micro-dot:** **`.login-page__benefit-accent`** (**`8px`** circle, **`aria-hidden="true"`**) — **odd** rows **sky** + glow; **even** rows **`--mss-orange-strong`** + glow.
+- Copy: **`.login-page__benefit-label`** with **`mss-body-sm mss-text-secondary`**.
+
+---
+
+#### 4.9.6 Form panel atmosphere
+
+**Surface:** **`--mss-bg-base`**, **`overflow: hidden`**, **`padding: 56px 24px`**, grid **centered** content.
+
+**`.login-page__form-atmosphere`:** **64×64** faint grid (**`0.025`** line opacity), radial mask **80% × 65%** at **70% 45%**. **`::after`** pseudo — large bottom **`border-radius: 50%`** ellipse, **`var(--mss-sky-deep)`**, **`blur(120px)`**, low opacity — ties visually to left panel without competing with **`login-card`**.
+
+**`max-width: 640px`:** grid layer **`opacity: 0.45`**, **`::after`** **`opacity: 0.06`** — keeps form readable.
+
+---
+
+#### 4.9.7 Login / signup card (“glass” elevation)
+
+**Container:** **`<form class="login-card">`** — **`width: min(100%, 480px)`**, **`gap: 20px`**, **`padding: 40px 48px 36px`** (**`32px 24px`** at **`≤560px`**).
+
+| Property | Token / value |
+|----------|----------------|
+| Radius | **`var(--mss-radius-2xl)`** (**28px** — principles / timeline family **§3.5**, **§3.11**) |
+| Border | **`1px solid var(--mss-border-subtle)`** |
+| Fill | **`var(--mss-bg-card)`** |
+| Outer shadow | **`0 28px 80px`** **`color-mix(in oklab, var(--mss-bg-base) 72%, transparent)`** |
+| Inner rim | **`box-shadow`** inset **`1px`** **`color-mix(in oklab, #fff 4%, transparent)`** |
+| Top hairline | **`::before`** — horizontal gradient **transparent → sky mix → orange mix → transparent** (**§3.5** shell vocabulary); **`left/right: 16px`**, **`top: 0`**, **`height: 1px`** |
+
+**Card title / intro:** **`login-card__title`** (24px semibold stack); **`login-card__intro`** + **`mss-body-sm mss-text-secondary`**.
+
+**Divider:** **`.login-card__divider`** — hairline / **or** / hairline, **`aria-hidden="true"`**.
+
+**Tertiary text buttons:** **Forgot password?**, **Create one →**, **Sign in →** — **`.login-card__text-button`**, sky color, **`focus-visible`** ring.
+
+---
+
+#### 4.9.8 Forms, validation, PrimeNG submit
+
+**Pattern:** **Typed reactive forms** (**`NonNullableFormBuilder`**), **`novalidate`** on **`<form>`**, **`(ngSubmit)`** handlers.
+
+**Login group:** **`email`** (**`required`**, **`Validators.email`**), **`password`** (**`required`**).
+
+**Signup group:** **`firstName`**, **`lastName`**, **`email`**, **`password`** (**`minLength(8)`**), optional **`companyName`**, **`phone`**.
+
+**Invalid submit:** **`markAllAsTouched()`** then return — no API call.
+
+**Inputs:** Native **`<input>`** under **`<label class="login-card__field">`** — **`min-height: 52px`**, **`font-size: 16px`** (zoom-safe), **`border-radius: var(--mss-radius-md)`**, **`background: var(--mss-bg-elevated)`**, **`border: var(--mss-border-default)`**, focus **sky** border + **3px** sky glow mix.
+
+**Signup layout:** **`.login-card__row`** — two columns **`≤560px`** → single column.
+
+**Submit:** **`<p-button type="submit" … />`** — **`label`** **Sign in** / **Create account**, **`size="large"`**, **`styleClass="mss-btn-primary login-card__p-button"`**, **`[rounded]="true"`**, **`[loading]`** / **`[disabled]`** tied to **`loading()`** signal. Full-width via **`:host ::ng-deep .login-card__p-button .p-button`** (**`min-height: 52px`**). Implements **`login.plan.md`** Phase 5 PrimeNG parity (**§2.6**).
+
+**Mode toggle:** **`isSignup`** signal; **`toggleMode()`** flips boolean and clears **`errorMessage`**.
+
+---
+
+#### 4.9.9 Errors, HTTP shapes, danger tokens
+
+**Banner:** **`<p class="login-card__error" role="alert">`** — **`width: min(100%, 480px)`**, above the card inside **`.login-page__form-inner`**.
+
+**CSS variables** (**`:root`** in **`styles.scss`** — **§2** extension):
+
+- **`--mss-danger-bg`**: **`color-mix(in oklab, #ef4444 18%, var(--mss-bg-card))`**
+- **`--mss-danger-text`**: **`#fca5a5`**
+- **`--mss-danger-border`**: **`color-mix(in oklab, #ef4444 45%, var(--mss-border-default))`**
+
+**TS extraction:** **`catch`** narrows with **`instanceof HttpErrorResponse`** / **`Error`**; **`messageFromHttpError`** inspects **`error.error`** JSON:
+
+- **Wrapped:** **`{ error: { error: string } }`** (**`isAuthWrappedNestedErrorBody`**)
+- **Flat:** **`{ error: string }`** (**`isAuthErrorMessageBody`**)
+
+Uses **`Reflect.get`** for **`in`**-guard-safe reads (**no `any` / `unknown`** in component error parsing). Fallback: **`Something went wrong. Please try again.`**
+
+---
+
+#### 4.9.10 Responsive summary
+
+| Breakpoint | Effects |
+|-------------|---------|
+| **`max-width: 900px`** | Shell **single column**; nav **`padding-inline: 24px`**; brand content **`min-height: 420px`**, **`padding: 56px 24px`**. |
+| **`max-width: 640px`** | Brand beams hidden; form atmosphere toned down (**§4.9.6**). |
+| **`max-width: 560px`** | Signup name row stacks; smaller glyph/wordmark/back link; card tighter padding. |
+
+---
+
+#### 4.9.11 Motion & accessibility notes
+
+- **Decorative layers** — static (no scroll-linked or looping CSS animations on login page).
+- **`prefers-reduced-motion: reduce`** — disables **transition** on back link, text buttons, and inputs (**§4.9.8**).
+- **Focus:** Brand, back link, text buttons, inputs — visible **`focus-visible`** rings (**sky**).
+- **Forgot password?** — **`type="button"`** (non-submit); **not** wired to a recovery flow in template-only review — product follow-up.
+
+---
+
+#### 4.9.12 Explicit non-goals (vs marketing hero)
+
+Documented in [`plans/login.plan.md`](plans/login.plan.md) **Out of scope:** no Hero **aurora / scanline / constellation SVG / seed-tree stage** (**§3.4**); no re-enabling global **`app-nav`** / **`app-footer`** on **`/login`** unless product changes chrome policy. Login should stay **fast and legible** — atmosphere is **static** and **lower amplitude** than Home.
+
+---
+
+#### 4.9.13 Related references
+
+- **§2** — tokens & **`mss-*`** utilities used on login.
+- **§3.1** — visual DNA (depth, accent roles, radii).
+- **§3.11** — new-page checklist (band, atmosphere, card radius, CTAs).
+- **§4.1** — **`hideChrome`** behavior.
+- **§4.2** — global nav (login header intentionally mirrors look, not component reuse).
+- **§4.5** — **`AuthService`** **`login`** / **`signup`**.
+- **§4.6** — guards affecting login and dashboard.
 
 ---
 
