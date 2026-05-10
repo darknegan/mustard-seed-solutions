@@ -1,69 +1,91 @@
-<div class="dashboard__content">
+<div class="dashboard__content dashboard-overview">
+  <div class="dashboard-page-atmosphere" aria-hidden="true">
+    <div class="dashboard-page-atmosphere__grid"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--sky"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--violet"></div>
+  </div>
+
   <div class="dashboard__page-intro">
     <p class="mss-eyebrow">Overview</p>
-    <h2 class="dashboard__title">Your project at a glance</h2>
-    <p class="dashboard__summary">
-      Site status, recent updates, and shortcuts—so nothing hides in email threads.
+    <h2 class="mss-h3">Your project at a glance</h2>
+    <p class="dashboard__summary mss-body mss-text-secondary">
+      {{ introSummary() }}
     </p>
   </div>
 
-  <div class="dashboard__mobile-status">
+  <div
+    class="dashboard__mobile-status"
+    [class.dashboard__mobile-status--neutral]="!showSeededExample()"
+  >
     <span aria-hidden="true"></span>
-    <span>adventurecon.com is live</span>
-    <strong>Live</strong>
-  </div>
-
-  <div class="dashboard__stats" aria-label="Project summary">
-    @for (stat of stats; track stat.label) {
-      <article
-        class="dashboard-card dashboard-stat"
-        [class.dashboard-stat--sky]="stat.tone === 'sky'"
-      >
-        <div class="dashboard-stat__header">
-          <p>{{ stat.label }}</p>
-          @if (stat.badge) {
-            <span>{{ stat.badge }}</span>
-          }
-        </div>
-        <strong>{{ stat.value }}</strong>
-        <small>{{ stat.caption }}</small>
-      </article>
+    @if (showSeededExample()) {
+      <span>Your site is live</span>
+      <strong>Live</strong>
+    } @else {
+      <span>Workspace loading</span>
+      <strong>Getting started</strong>
     }
   </div>
+
+  <dl class="dashboard__stats" aria-label="Project summary">
+    @for (stat of stats(); track stat.label) {
+      <article
+        class="dashboard-card dashboard-card--hairline dashboard-stat"
+        [attr.data-accent]="stat.accent"
+      >
+        <div class="dashboard-stat__row">
+          <dt class="dashboard-stat__label">{{ stat.label }}</dt>
+          @if (stat.badge && stat.status) {
+            <span class="dashboard-stat__badge" [attr.data-status]="stat.status">{{ stat.badge }}</span>
+          }
+        </div>
+        <dd class="dashboard-stat__value">{{ stat.value }}</dd>
+        <dd class="dashboard-stat__caption">{{ stat.caption }}</dd>
+      </article>
+    }
+  </dl>
 
   <div class="dashboard__divider" aria-hidden="true"></div>
 
   <div class="dashboard__panels">
-    <article class="dashboard-card dashboard-activity">
+    <article
+      class="dashboard-card dashboard-card--hairline dashboard-activity"
+      aria-labelledby="activity-heading"
+    >
       <header>
-        <h3>Recent activity</h3>
-        <p>The latest notes from your project</p>
+        <h3 id="activity-heading">Recent activity</h3>
+        <p>The latest notes from your project.</p>
       </header>
 
-      <ol class="dashboard-activity__list">
-        @for (activity of activities; track activity.title) {
-          <li
-            class="dashboard-activity__item"
-            [class.dashboard-activity__item--sky]="activity.tone === 'sky'"
-            [class.dashboard-activity__item--orange]="activity.tone === 'orange'"
-            [class.dashboard-activity__item--green]="activity.tone === 'green'"
-            [class.dashboard-activity__item--muted]="activity.tone === 'muted'"
-          >
-            <span class="dashboard-activity__dot" aria-hidden="true"></span>
-            <div>
+      @if (activities().length) {
+        <ol class="dashboard-activity__list">
+          @for (activity of activities(); track activity.title) {
+            <li class="dashboard-activity__item" [attr.data-accent]="activity.accent">
+              <span class="dashboard-activity__dot" aria-hidden="true"></span>
               <h4>{{ activity.title }}</h4>
               <time>{{ activity.time }}</time>
               <p>{{ activity.description }}</p>
-            </div>
-          </li>
-        }
-      </ol>
+            </li>
+          }
+        </ol>
+      } @else {
+        <div class="dashboard-empty" role="status">
+          <span class="dashboard-empty__icon" aria-hidden="true">
+            <i class="pi pi-history"></i>
+          </span>
+          <h4>No activity yet</h4>
+          <p>{{ activityEmptyMessage() }}</p>
+        </div>
+      }
     </article>
 
-    <article class="dashboard-card dashboard-actions">
+    <article
+      class="dashboard-card dashboard-card--hairline dashboard-actions"
+      aria-labelledby="actions-heading"
+    >
       <header>
-        <h3>Next steps</h3>
-        <p>Common tasks</p>
+        <h3 id="actions-heading">Next steps</h3>
+        <p>Common tasks.</p>
       </header>
 
       <div class="dashboard-actions__list">
@@ -71,13 +93,14 @@
           <a
             class="dashboard-action"
             [routerLink]="action.route"
-            [class.dashboard-action--sky]="action.tone === 'sky'"
-            [class.dashboard-action--orange]="action.tone === 'orange'"
-            [class.dashboard-action--muted]="action.tone === 'muted'"
+            [attr.data-accent]="action.accent"
           >
-            <span>
-              <strong>{{ action.label }}</strong>
-              <small>{{ action.description }}</small>
+            <span class="dashboard-action__icon" aria-hidden="true">
+              <i [class]="action.icon"></i>
+            </span>
+            <span class="dashboard-action__body">
+              <strong class="dashboard-action__title">{{ action.label }}</strong>
+              <span class="dashboard-action__description">{{ action.description }}</span>
             </span>
             <span class="dashboard-action__chevron" aria-hidden="true"></span>
           </a>

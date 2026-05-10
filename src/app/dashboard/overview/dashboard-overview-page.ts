@@ -1,26 +1,61 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+
+import {
+  emailShowsDashboardSeededExample,
+  OVERVIEW_ACTIVITIES_SEEDED_EXAMPLE,
+  OVERVIEW_STATS_EMPTY,
+  OVERVIEW_STATS_SEEDED_EXAMPLE,
+  type DashboardOverviewActivitySeed,
+  type DashboardOverviewStatSeed,
+} from '@app/shared/dashboard/dashboard-seeded-example';
+import { AuthService } from '@app/shared/services/auth.service';
+
+type DashboardAccent = 'sky' | 'orange' | 'violet' | 'muted';
+type StatStatus = 'success' | 'warn' | 'info';
 
 interface DashboardStat {
   readonly label: string;
   readonly value: string;
   readonly caption: string;
-  readonly tone?: 'sky' | 'primary';
+  readonly accent: DashboardAccent;
   readonly badge?: string;
+  readonly status?: StatStatus;
 }
 
 interface ActivityItem {
   readonly title: string;
   readonly time: string;
   readonly description: string;
-  readonly tone: 'sky' | 'orange' | 'green' | 'muted';
+  readonly accent: 'sky' | 'orange' | 'success' | 'muted';
 }
 
 interface QuickAction {
   readonly label: string;
   readonly description: string;
-  readonly tone: 'sky' | 'orange' | 'muted';
+  readonly accent: DashboardAccent;
+  readonly icon: string;
   readonly route: string;
+}
+
+function mapStat(seed: DashboardOverviewStatSeed): DashboardStat {
+  return {
+    label: seed.label,
+    value: seed.value,
+    caption: seed.caption,
+    accent: seed.accent,
+    ...(seed.badge !== undefined ? { badge: seed.badge } : {}),
+    ...(seed.status !== undefined ? { status: seed.status } : {}),
+  };
+}
+
+function mapActivity(seed: DashboardOverviewActivitySeed): ActivityItem {
+  return {
+    title: seed.title,
+    time: seed.time,
+    description: seed.description,
+    accent: seed.accent,
+  };
 }
 
 @Component({
@@ -31,70 +66,56 @@ interface QuickAction {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardOverviewPageComponent {
-  protected readonly stats: readonly DashboardStat[] = [
-    {
-      label: 'Site health',
-      value: 'Live',
-      caption: 'adventurecon.com is online',
-      tone: 'sky',
-      badge: 'Healthy',
-    },
-    {
-      label: 'Open requests',
-      value: '2',
-      caption: 'Changes pending review',
-    },
-    {
-      label: 'Documents',
-      value: '7',
-      caption: 'Files in your library',
-    },
-  ];
+  private readonly auth = inject(AuthService);
 
-  protected readonly activities: readonly ActivityItem[] = [
-    {
-      title: 'Homepage sections approved',
-      time: '2 days ago',
-      description: 'Hero, About, and contact sections reviewed and signed off.',
-      tone: 'sky',
-    },
-    {
-      title: 'Change request submitted',
-      time: '5 days ago',
-      description: 'Updated bio text and new staff photo requested.',
-      tone: 'orange',
-    },
-    {
-      title: 'Site went live',
-      time: '2 weeks ago',
-      description: 'adventurecon.com is live and showing in search.',
-      tone: 'green',
-    },
-    {
-      title: 'Secure connection turned on',
-      time: '3 weeks ago',
-      description: 'Your web address now opens with a secure connection.',
-      tone: 'muted',
-    },
-  ];
+  protected readonly showSeededExample = computed(() =>
+    emailShowsDashboardSeededExample(this.auth.user()?.email),
+  );
+
+  protected readonly introSummary = computed(() =>
+    this.showSeededExample()
+      ? 'Site status, recent updates, and shortcuts—so nothing hides in email threads.'
+      : 'We are getting your workspace ready. Status counts and updates will show up here once your project is connected.',
+  );
+
+  protected readonly stats = computed((): readonly DashboardStat[] => {
+    const seeds = this.showSeededExample() ? OVERVIEW_STATS_SEEDED_EXAMPLE : OVERVIEW_STATS_EMPTY;
+    return seeds.map(mapStat);
+  });
+
+  protected readonly activities = computed((): readonly ActivityItem[] => {
+    return this.showSeededExample()
+      ? OVERVIEW_ACTIVITIES_SEEDED_EXAMPLE.map(mapActivity)
+      : [];
+  });
+
+  /** Shown when the activity list has no rows (real accounts start empty; demo account normally has rows). */
+  protected readonly activityEmptyMessage = computed(() =>
+    this.showSeededExample()
+      ? 'Once we make changes or share notes, they will show up here.'
+      : 'When there are updates on your site or messages from our team, they will appear here so you do not have to dig through email.',
+  );
 
   protected readonly quickActions: readonly QuickAction[] = [
     {
-      label: 'Request a Change',
-      description: 'Submit a site update request',
-      tone: 'sky',
+      label: 'Request a change',
+      description: 'Send us a quick site update.',
+      accent: 'sky',
+      icon: 'pi pi-pencil',
       route: '/dashboard/request-change',
     },
     {
-      label: 'Report an Issue',
-      description: 'Flag a bug or problem',
-      tone: 'orange',
+      label: 'Report an issue',
+      description: 'Flag something that looks wrong.',
+      accent: 'orange',
+      icon: 'pi pi-flag-fill',
       route: '/dashboard/report-issue',
     },
     {
-      label: 'View My Documents',
-      description: 'Access your project files',
-      tone: 'muted',
+      label: 'View your documents',
+      description: 'Open the file library.',
+      accent: 'violet',
+      icon: 'pi pi-folder',
       route: '/dashboard/documents',
     },
   ];

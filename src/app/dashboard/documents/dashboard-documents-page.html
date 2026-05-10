@@ -1,57 +1,106 @@
 <div class="dashboard__content dashboard-documents">
+  <div class="dashboard-page-atmosphere" aria-hidden="true">
+    <div class="dashboard-page-atmosphere__grid"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--sky"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--violet"></div>
+  </div>
+
   <div class="dashboard__page-intro">
     <p class="mss-eyebrow">My documents</p>
-    <h2 class="dashboard__title">Your project files</h2>
-    <p class="dashboard__summary">
-      Approvals, launch notes, and drafts—organized here instead of scattered across messages.
+    <h2 class="mss-h3">Your project files</h2>
+    <p class="dashboard__summary mss-body mss-text-secondary">
+      {{ introSummary() }}
     </p>
   </div>
 
-  <div class="dashboard__mobile-status">
+  <div
+    class="dashboard__mobile-status"
+    [class.dashboard__mobile-status--neutral]="!showSeededExample()"
+  >
     <span aria-hidden="true"></span>
-    <span>7 files ready</span>
-    <strong>Ready</strong>
+    @if (showSeededExample()) {
+      <span>{{ documents().length }} files ready</span>
+      <strong>Ready</strong>
+    } @else {
+      <span>No files yet</span>
+      <strong>Library empty</strong>
+    }
   </div>
 
   <div class="dashboard-documents__layout">
-    <aside class="dashboard-card dashboard-documents__folders" aria-label="Document folders">
+    <aside
+      class="dashboard-card dashboard-card--hairline dashboard-documents__folders"
+      aria-label="Document folders"
+    >
       <h3>Folders</h3>
       <div class="dashboard-documents__folder-list">
-        @for (folder of folders; track folder.label) {
-          <button type="button" [class.is-active]="$first">
-            <span>{{ folder.label }}</span>
-            <strong>{{ folder.count }}</strong>
+        @for (folder of folders; track folder.id) {
+          <button
+            type="button"
+            class="dashboard-documents__folder"
+            [class.is-active]="folder.id === activeFolderId()"
+            (click)="setFolder(folder.id)"
+          >
+            <span class="dashboard-documents__folder-icon" aria-hidden="true">
+              <i [class]="folder.icon"></i>
+            </span>
+            <span class="dashboard-documents__folder-label">{{ folder.label }}</span>
+            <span class="dashboard-documents__folder-count">{{ countFor(folder.id) }}</span>
           </button>
         }
       </div>
     </aside>
 
-    <section class="dashboard-card dashboard-documents__panel" aria-labelledby="documents-heading">
+    <section
+      class="dashboard-card dashboard-card--hairline dashboard-documents__panel"
+      aria-labelledby="documents-heading"
+    >
       <header>
         <div>
           <h3 id="documents-heading">Recent files</h3>
-          <p>Shared for AdventureCon</p>
+          <p>Shared for {{ companyDisplay() }}.</p>
         </div>
-        <button type="button" class="dashboard-documents__upload">Upload</button>
+        <button
+          type="button"
+          class="p-button p-component p-button-rounded mss-btn-ghost dashboard-documents__upload"
+          [disabled]="uploading()"
+          (click)="onUpload()"
+        >
+          <i class="pi pi-upload" aria-hidden="true"></i>
+          <span class="p-button-label">{{ uploading() ? 'Uploading…' : 'Upload' }}</span>
+        </button>
       </header>
 
-      <div class="dashboard-documents__list">
-        @for (document of documents; track document.title) {
-          <article
-            class="dashboard-document"
-            [class.dashboard-document--sky]="document.tone === 'sky'"
-            [class.dashboard-document--orange]="document.tone === 'orange'"
-          >
-            <span class="dashboard-document__icon" aria-hidden="true"></span>
-            <div>
-              <h4>{{ document.title }}</h4>
-              <p>{{ document.description }}</p>
-              <small>{{ document.updated }}</small>
-            </div>
-            <span class="dashboard-document__type">{{ document.type }}</span>
-          </article>
-        }
-      </div>
+      @if (visibleDocuments().length) {
+        <div class="dashboard-documents__list">
+          @for (document of visibleDocuments(); track document.title) {
+            <article class="dashboard-document" [attr.data-accent]="document.accent">
+              <span class="dashboard-document__icon" aria-hidden="true">
+                <i [class]="document.icon"></i>
+              </span>
+              <div class="dashboard-document__body">
+                <h4>{{ document.title }}</h4>
+                <p>{{ document.description }}</p>
+                <small>{{ document.updated }}</small>
+              </div>
+              <span class="dashboard-document__type">{{ document.type }}</span>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="dashboard-empty" role="status">
+          <span class="dashboard-empty__icon" aria-hidden="true">
+            <i class="pi pi-folder-open"></i>
+          </span>
+          @if (documents().length === 0) {
+            <h4>No files shared yet</h4>
+            <p>When we add handoffs, approvals, or launch notes, they will appear in these folders.</p>
+          } @else {
+            <h4>Nothing in this folder yet</h4>
+            <p>Once a file is shared in this folder, it will show up here.</p>
+          }
+        </div>
+      }
     </section>
   </div>
 </div>

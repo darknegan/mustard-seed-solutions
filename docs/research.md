@@ -1,6 +1,6 @@
-# Marketing pages reference — Home, About, Process, Solutions
+# Marketing & portal reference — Home, About, Process, Solutions, Client dashboard
 
-Reference for how the **home** (`/`), **about** (`/about`), **process** (`/process`), **solutions** (`/solutions`), and **client login** (`/login`) experiences are wired in Angular, how HTML is structured, and how the shared **MSS** theme (CSS variables + utility classes) ties sections together. Use **§3** for **visual layout, enhanced effects, and Figma MCP** alignment; use later sections for code structure and file paths.
+Reference for how the **home** (`/`), **about** (`/about`), **process** (`/process`), **solutions** (`/solutions`), **client login** (`/login`), and **client dashboard** (`/dashboard` and nested routes) experiences are wired in Angular, how HTML is structured, and how the shared **MSS** theme (CSS variables + utility classes) ties sections together. Use **§3** for **visual layout, enhanced effects, and Figma MCP** alignment; use later sections for code structure and file paths. **Client dashboard** portal detail: **§4.10**.
 
 Implementation alignment notes for `/about` live in [`plans/about.plan.md`](plans/about.plan.md) (atmosphere, typography, feature tiles, scripture card, stats, CTA parity). **Login / client portal gate** alignment and phased implementation history live in [`plans/login.plan.md`](plans/login.plan.md); the canonical **runtime + visual spec** for `/login` is **§4.9** below.
 
@@ -14,7 +14,7 @@ Implementation alignment notes for `/about` live in [`plans/about.plan.md`](plan
 | Global styles | `src/styles.scss` (design tokens, `.mss-*` utilities, PrimeNG overrides) |
 | Third-party UI | PrimeNG (`ButtonModule`, `TagModule`), PrimeIcons (`pi pi-*`) |
 | App shell | `App` → sticky `app-nav`, `<main id="main">` + `router-outlet`, `app-footer` (hidden when `data.hideChrome === true`) |
-| Routing | `src/app/app.routes.ts` — marketing routes are **eager** (not lazy-loaded); titles set via `title` on each route |
+| Routing | `src/app/app.routes.ts` — marketing routes are **eager** (not lazy-loaded); **`/login`** and **`/dashboard`** are **lazy** (`loadComponent`); titles set via `title` on each route |
 
 ### Route → component map
 
@@ -23,6 +23,7 @@ Implementation alignment notes for `/about` live in [`plans/about.plan.md`](plan
 - **`'process'`** → `ProcessPageComponent` (`src/app/process/process-page.ts`)
 - **`'solutions'`** → `SolutionsPageComponent` (`src/app/solutions/solutions-page.ts`)
 - **`'login'`** → **`LoginPageComponent`** (`src/app/login/login-page.ts`) — **lazy-loaded** (`loadComponent`); **`data.hideChrome: true`**; **`redirectToDashboardIfLoggedInGuard`** (logged-in users skip the screen); route **`title`:** `Client sign in — Mustard Seed Solutions` (`app.routes.ts`)
+- **`'dashboard'`** → **`DashboardPageComponent`** (`src/app/dashboard/dashboard-page.ts`) — **lazy-loaded**; **`data.hideChrome: true`**; **`requireAuthGuard`** + **`canActivateChild`**; nested **`''`**, **`documents`**, **`request-change`**, **`report-issue`** — full portal reference **§4.10**
 
 ### Composition pattern (important)
 
@@ -720,6 +721,308 @@ Documented in [`plans/login.plan.md`](plans/login.plan.md) **Out of scope:** no 
 
 ---
 
+### 4.10 Client dashboard portal (`/dashboard`)
+
+**Purpose:** Authenticated **client portal** — chrome-free full viewport (**§4.1** `hideChrome`), lazy-loaded shell with nested routes for overview, documents, change requests, and issue reports. Visual language aligns with marketing **§3** (dark surfaces, sky/orange/violet accents, frosted bars, `dashboard-card` glass vocabulary) at **lower amplitude** than Hero-level motion: decorative grids and blurred glows are **static**.
+
+**Primary files:**
+
+| Role | Path |
+|------|------|
+| Routes + `data` | `src/app/app.routes.ts` (`path: 'dashboard'` + `children`) |
+| Shell component | `src/app/dashboard/dashboard-page.ts`, `.html`, `.scss` |
+| Overview | `src/app/dashboard/overview/dashboard-overview-page.ts`, `.html` |
+| Request a change | `src/app/dashboard/request-change/dashboard-request-change-page.ts`, `.html` |
+| Report an issue | `src/app/dashboard/report-issue/dashboard-report-issue-page.ts`, `.html` |
+| Shared portal SCSS | `dashboard-page.scss` (**`ViewEncapsulation.None`** on shell — rules apply to shell **and** all routed children) |
+| Demo vs empty data | `src/app/shared/dashboard/dashboard-seeded-example.ts` |
+
+---
+
+#### 4.10.1 Routing, guards, and titles
+
+| Concern | Detail |
+|--------|--------|
+| Path | **`dashboard`** |
+| Parent load | **`loadComponent`** → **`DashboardPageComponent`** |
+| Child routes | **`''`** → Overview; **`documents`**, **`request-change`**, **`report-issue`** → lazy components |
+| Auth | **`requireAuthGuard`** on parent **`canActivate`** + **`canActivateChild`** (**§4.6**) — entire subtree private |
+| Chrome | **`data: { hideChrome: true }`** — **`App`** hides **`app-nav`** / **`app-footer`** (**§4.1**) |
+| Default route title | Parent **`title`:** **`Client dashboard — Mustard Seed Solutions`**; children override where noted in `app.routes.ts` |
+
+**Route `data` contract (shell reads leaf):** Each child sets optional **`portalTitle`** and **`portalGreeting`** strings. **`DashboardPageComponent`** walks **`router.routerState.snapshot.root`** to the **deepest `firstChild`** on **`NavigationEnd`** and copies:
+
+- **`pageTitle`** ← `portalTitle` or **`Dashboard`**
+- **`greeting`** ← `portalGreeting` or default *Here’s what’s happening with your site today.*
+
+| Child path | `portalTitle` | `portalGreeting` |
+|------------|---------------|-------------------|
+| `''` | Dashboard | Here's what's happening with your site today. |
+| `documents` | My Documents | Your files are ready when you need them. |
+| `request-change` | Request a Change | Tell us what needs to be updated. |
+| `report-issue` | Report an Issue | Tell us what broke so we can reproduce it quickly. |
+
+---
+
+#### 4.10.2 Dashboard shell — component architecture
+
+**Selector:** **`app-dashboard-page`**
+
+**Angular:** **`standalone: true`**, **`ChangeDetectionStrategy.OnPush`**, **`ViewEncapsulation.None`** (global dashboard stylesheet applies to child route hosts).
+
+**Imports:** **`RouterLink`**, **`RouterLinkActive`**, **`RouterOutlet`** only.
+
+**Injected:** **`Router`**, **`AuthService`** (**§4.5**).
+
+**State (signals):**
+
+- **`pageTitle`**, **`greeting`** — fed by **`updatePageLabels()`** (see **§4.10.1**).
+- **`mobileMenuOpen`** — toggles overlay drawer on narrow layouts.
+
+**Computed (from `auth.user()`):**
+
+- **`avatarInitials`** — first letters of **`firstName`** + **`lastName`**, else first letter of **`companyName`**, else empty (sidebar shows **`pi-user`**).
+- **`companyDisplay`** — trimmed **`companyName`**, else **`firstName lastName`**, else **`Client portal`**.
+- **`siteHostDisplay`** — **placeholder**, not real DNS: if **`companyName`** exists, slugify to lowercase alphanumerics and show **`{slug}.com`**; else **`Your site is live`**. Same string drives sidebar secondary line **and** header **site pill** — product note for future “real site URL” field.
+
+**Navigation model:**
+
+- **`navItems`** — readonly **`DashboardNavItem[]`**: **`label`**, **`shortLabel`** (tab bar), **`route`**, **`icon`** (PrimeIcons **`pi pi-*`**).
+- **`routerLinkActive="is-active"`** with **`exact: true`** only for **`/dashboard`** so **`/dashboard/documents`** does not highlight Overview.
+
+**Actions:**
+
+- **`signOut()`** → **`auth.logout()`** (clears token, navigates **`/`**).
+- **`toggleMobileMenu()`** / **`closeMobileMenu()`**.
+- **`constructor`** — initial **`updatePageLabels()`**; subscribes to **`NavigationEnd`** with **`takeUntilDestroyed`** to refresh titles and close mobile menu.
+
+---
+
+#### 4.10.3 Shell DOM skeleton & landmarks
+
+**Root:** **`<section class="dashboard" aria-labelledby="dashboard-heading">`**
+
+| Region | Element | Notes |
+|--------|---------|------|
+| Sidebar | **`<aside class="dashboard__sidebar">`** | **`aria-label="Client portal navigation"`** |
+| Sidebar decor | **`.dashboard__sidebar-atmosphere`** | Grid + three glows (**sky / orange / violet**), **`aria-hidden="true"`** |
+| Brand | **`<a class="dashboard__brand" routerLink="/">`** | Glyph **`/mustard-seed-glyph-logo.svg`**, wordmark **Mustard Seed / Client portal** |
+| Primary nav | **`<nav class="dashboard__nav" aria-label="Dashboard">`** | **`Menu`** caption + **`@for`** links |
+| Account | **`.dashboard__account`** | Avatar, **`companyDisplay`** + **`siteHostDisplay`**, ghost **`p-button`** Sign out |
+| Mobile top bar | **`.dashboard__mobile-top`** | Hidden desktop; brand + hamburger (**`§4.10.10**) |
+| Mobile menu | **`#dashboard-mobile-menu`** | **`role="dialog"`**, conditional on **`mobileMenuOpen()`** |
+| Main | **`<main class="dashboard__main">`** | Atmosphere layer + **sticky header** + scroll region |
+| Main decor | **`.dashboard__main-atmosphere`** | Grid + glows, **`aria-hidden="true"`** |
+| Sticky header | **`.dashboard__header`** | **`h1#dashboard-heading`** = **`pageTitle()`**; greeting line; **`dashboard__site-pill`** with pulse dot + **`siteHostDisplay()`** |
+| Content | **`<div class="dashboard__scroll"><router-outlet /></div>`** | Outlet pinned (**§4.10.4**) |
+| Tab bar | **`<nav class="dashboard__tabbar" aria-label="Dashboard tabs">`** | Icon + **`shortLabel`** per item; hidden desktop |
+
+**Accessibility:** Single **`h1`** in shell for the active portal screen title; child pages use **`h2`** for page intros (**`mss-h3`** class) to preserve heading order.
+
+---
+
+#### 4.10.4 Viewport, scrolling, and `App` coupling
+
+**Problem:** Nested **`router-outlet`** has no intrinsic height; portal must fill **`100dvh`** without double scrollbars.
+
+**`app.scss` (**§4.1**):** **`:host:has(app-dashboard-page)`** pins dashboard height; **`main:has(app-dashboard-page)`** absolutely positions outlet + **`app-dashboard-page`** **`inset: 0`**.
+
+**`dashboard-page.scss`:**
+
+- **`.dashboard`** — desktop CSS grid **`260px | 1fr`**; **`overflow: hidden`** on section.
+- **`.dashboard__main`** — column flex; **`min-height: 0`** so flex children can shrink.
+- **`.dashboard__scroll`** — **`overflow: hidden`**; contains positioned outlet.
+- **`.dashboard__scroll > router-outlet`** — **`position: absolute; inset: 0`**.
+- **Routed hosts** (`app-dashboard-overview-page`, …-documents-, …-request-change-, …-report-issue-) — **`position: absolute; inset: 0`**, **`display: flex; flex-direction: column`**, **`overflow: hidden`**.
+- **`.dashboard__scroll .dashboard__content`** — **`flex: 1 1 0`**, **`min-height: 0`**, **`overflow-y: auto`**, **`scrollbar-gutter: stable`**, thin themed scrollbar, **`overscroll-behavior: contain`**.
+
+**Net effect:** Only **`.dashboard__content`** scrolls; header/sidebar/tab chrome stays fixed within the portal viewport.
+
+---
+
+#### 4.10.5 Shared visual system (cards, atmosphere, accents)
+
+**Card primitive:** **`.dashboard-card`** — **`--mss-radius-2xl`**, **`--mss-bg-card`**, hairline border, soft outer shadow, subtle inner top rim.
+
+**Hairline variant:** **`.dashboard-card--hairline::before`** — horizontal gradient top edge (**transparent → sky/orange mix → transparent**) — same family as login glass card (**§4.9.7**) and principles shell (**§3.5**).
+
+**Page atmosphere (child pages):** **`.dashboard-page-atmosphere`** inside **`.dashboard__content`** — faint **56px-class grid**, **`radial-gradient` mask**, **two** blurred glows. Palette differs by page:
+
+| Page root class | Glow accents |
+|-----------------|--------------|
+| **`dashboard-overview`** | sky, violet |
+| **`dashboard-form-page--change`** | sky, violet |
+| **`dashboard-form-page--issue`** | orange, violet |
+
+**Accent propagation:** Many blocks set **`[attr.data-accent]`** with **`sky | orange | violet | muted | success`** — SCSS drives rails, badges, icon wells, and timeline dots (overview stats/activity; **My Documents** list uses the same token pattern).
+
+**Eyebrows:** **`mss-eyebrow`** on Overview and Request a change; Report an issue uses **`mss-eyebrow mss-eyebrow--orange`** (**§2.5**) for warmer urgency without changing layout.
+
+**Typography helpers:** **`mss-h3`**, **`mss-h4`**, **`mss-body`**, **`mss-body-sm`**, **`mss-text-secondary`**, **`mss-text-muted`** — **§2**.
+
+---
+
+#### 4.10.6 Overview page (`/dashboard`)
+
+**Selector:** **`app-dashboard-overview-page`**
+
+**Imports:** **`RouterLink`** only.
+
+**Auth-aware demo data:** Injects **`AuthService`**; **`showSeededExample`** = **`emailShowsDashboardSeededExample(user?.email)`** (**§4.10.9**).
+
+**Computed content:**
+
+| Signal / computed | Seeded demo account | All other accounts |
+|-------------------|---------------------|---------------------|
+| **`introSummary`** | “Site status, recent updates…” | “We are getting your workspace ready…” |
+| **`stats`** | **`OVERVIEW_STATS_SEEDED_EXAMPLE`** mapped | **`OVERVIEW_STATS_EMPTY`** (muted site row, zeros, no healthy badge) |
+| **`activities`** | Four timeline rows | **`[]`** → empty state UI |
+| **`activityEmptyMessage`** | Short placeholder | Longer outcome-focused copy |
+
+**Static:** **`quickActions`** — three **`RouterLink`** rows (request change, report issue, documents); **not** gated by demo flag.
+
+**Template structure (`dashboard-overview-page.html`):**
+
+1. **`.dashboard__content.dashboard-overview`** + atmosphere layer.
+2. **`.dashboard__page-intro`** — eyebrow **Overview**, **`h2`** *Your project at a glance*, summary paragraph.
+3. **`.dashboard__mobile-status`** — success styling when seeded (**Live**); **`dashboard__mobile-status--neutral`** when empty (**Getting started**) — **§4.10.10**.
+4. **`<dl class="dashboard__stats">`** — **`@for (stat of stats(); track stat.label)`** → **`article.dashboard-stat`** with optional **`dashboard-stat__badge`** when **`badge` + `status`** present (demo **Healthy** chip only on seeded path).
+5. **`.dashboard__divider`**
+6. **`.dashboard__panels`** — two **`article.dashboard-card`** columns:
+   - **Recent activity** — **`ol.dashboard-activity__list`** or **`dashboard-empty`** with **`pi-history`** icon + **`activityEmptyMessage()`**.
+   - **Next steps** — **`dashboard-actions__list`** of **`a.dashboard-action`** with icon, title, description, chevron.
+
+**Design intent:** Left column = **temporal** narrative (timeline); right column = **task shortcuts**. Matches marketing “phase chips + stats” readability (**§3.6**) at dashboard density.
+
+---
+
+#### 4.10.7 Request a change page (`/dashboard/request-change`)
+
+**Selector:** **`app-dashboard-request-change-page`**
+
+**Imports:** **`ReactiveFormsModule`**, **`ButtonModule`** (**`p-button`**).
+
+**Form:** **`NonNullableFormBuilder`** group:
+
+| Control | Validators | Default |
+|---------|------------|---------|
+| **`updateType`** | required | Text update |
+| **`pageArea`** | required, **minLength(2)** | '' |
+| **`details`** | required, **minLength(12)** | '' |
+| **`timing`** | required | This week |
+
+**Select options** are plain **`<option>`** strings (no value attributes) — Angular binds label text as value.
+
+**UI state signals:** **`submitted`**, **`submitting`**.
+
+**Helpers:** **`isInvalid(controlName)`** — invalid && (dirty || touched); **`errorFor`** — maps **`required`** / **`minlength`** to plain-language strings (**client-audience-content** alignment).
+
+**Submit:** **`submit()`** — if invalid, **`markAllAsTouched`**; else **`submitting` true**, **`setTimeout` 600ms**, then **`submitting` false**, **`submitted` true**. **No HTTP** — stub success path only.
+
+**Sidebar content:** **`examples`** readonly **`ChangeExample[]`** — three coaching tiles (**Helpful examples**) rendered in **`.dashboard-help`** with dot bullets.
+
+**Template layout:**
+
+- Root **`.dashboard-form-page.dashboard-form-page--change`**
+- Intro: eyebrow **Request a change**, **`h2`**, summary.
+- **`.dashboard-form-page__layout`** — CSS grid **main column + 360px aside** (stacks on mobile **§4.10.10**).
+- **`<form class="dashboard-form">`** — header block, conditional **`dashboard-form__success`** with **`pi-check`** after submit, four labeled fields (`select` / `input` / `textarea`), **`p-button`** **Send request** **`mss-btn-primary`**, **`rounded`**, loading/disabled tied to **`submitting()`**.
+
+**SCSS coupling:** **`.dashboard-form`** defaults **`--mss-form-accent`** to sky; issue page overrides to orange (**§4.10.8**). Success banner uses **`var(--mss-form-accent)`** mixes.
+
+---
+
+#### 4.10.8 Report an issue page (`/dashboard/report-issue`)
+
+**Selector:** **`app-dashboard-report-issue-page`**
+
+**Same patterns as Request a change** (**§4.10.7**) with different copy, accents, and fields.
+
+**Form controls:**
+
+| Control | Validators | Default |
+|---------|------------|---------|
+| **`pageUrl`** | required, **minLength(2)** | '' |
+| **`issueType`** | required | Something looks wrong |
+| **`device`** | required | Desktop computer |
+| **`details`** | required, **minLength(12)** | '' |
+
+**Sidebar:** **`tips`** — three **Details that help** articles (where / expected / device).
+
+**Success treatment:** **`dashboard-form__success`** uses **`pi-info-circle`** (informational tone vs checkmark on change request).
+
+**Root modifier:** **`dashboard-form-page--issue`** — atmosphere glows orange-heavy; **`.dashboard-form`** and **`.dashboard-help`** CSS variables shift **`--mss-form-accent`** to **`--mss-orange-strong`** (**`dashboard-page.scss`**).
+
+**Submit:** Same **`setTimeout`** stub as change request.
+
+---
+
+#### 4.10.9 Seeded demo vs empty-state data
+
+**Module:** **`src/app/shared/dashboard/dashboard-seeded-example.ts`**
+
+**Gate:**
+
+- **`DASHBOARD_SEEDED_EXAMPLE_EMAIL`** — currently **`drakedavisdev@gmail.com`** (exact match after trim + lower-case).
+- **`emailShowsDashboardSeededExample(email)`** — **`boolean`**.
+
+**Exported datasets:**
+
+- **`OVERVIEW_STATS_SEEDED_EXAMPLE`** / **`OVERVIEW_STATS_EMPTY`**
+- **`OVERVIEW_ACTIVITIES_SEEDED_EXAMPLE`**
+- **`DOCUMENTS_SEEDED_EXAMPLE`** — used by **My Documents** page (not §4.10.6–8 but same gate).
+
+**Purpose:** Keep **realistic example rows** in source for future API wiring, Storybook, or screenshots, while **production-like accounts** (e.g. **`drake@mustard-seed-solutions.com`**) see **zeros and empty timelines** without removing mock data from the repo.
+
+**Future migration:** Replace email gate with **`role === 'demo'`** from backend, feature flag, or environment — **`dashboard-seeded-example.ts`** remains the single seed catalog.
+
+---
+
+#### 4.10.10 Responsive behavior & mobile chrome
+
+**Breakpoint:** **`max-width: 1120px`** in **`dashboard-page.scss`**.
+
+**Desktop-only:** Sidebar (**`.dashboard__sidebar`**) and **`.dashboard__header`** visible; **`.dashboard__mobile-top`**, **`.dashboard__mobile-menu`**, **`.dashboard__tabbar`** **`display: none`**.
+
+**Narrow:**
+
+- **Sidebar + desktop header hidden** — navigation moves to **sticky top bar** + optional **drawer** + **bottom tab bar**.
+- **`.dashboard__mobile-top`** — sticky, frosted (**blur ~18px**), brand + **three-bar** menu; **`aria-expanded`** / **`aria-controls`** wired.
+- **`.dashboard__mobile-menu`** — stacked **`routerLink`** rows + full-width Sign out; **`role="dialog"`**.
+- **`.dashboard__tabbar`** — fixed bottom navigation (**`padding-bottom: 72px`** on **`.dashboard`** to clear tab bar).
+- **`.dashboard__mobile-status`** — **`display: flex`** only here — compact status strip under page intro on Overview/Documents (success vs **neutral** variant **§4.10.6**).
+- **Form layouts:** **`dashboard-form-page__layout`** becomes single column; reduced card padding.
+- **Overview stats grid:** **2 columns** on small screens.
+
+**Focus:** Menu button **`focus-visible`** ring (**`--mss-sky`**).
+
+---
+
+#### 4.10.11 Backend integration gaps (explicit stubs)
+
+| Feature | Current behavior |
+|---------|------------------|
+| Overview stats / activity | Client-side arrays or empty; **no** `HttpClient` |
+| Request a change | **`setTimeout`** faux submit; **no** POST |
+| Report an issue | Same |
+| Documents page | Upload button **`setTimeout`** only; list from seed or empty |
+
+**Auth:** Session still real (**§4.5** **`login` / `me` / JWT**); portal **layout** is authenticated shell over **mostly static UI**.
+
+**PrimeNG:** Forms use native **`input` / `select` / `textarea`** under **`dashboard-form__field`** — not **`p-input`**; styling from **`dashboard-page.scss`** (focus rings, invalid borders, **`dashboard-form__error`**).
+
+---
+
+#### 4.10.12 Cross-references
+
+- **§4.1** — **`hideChrome`**, **`main`** / dashboard height hacks.
+- **§4.5** — **`AuthService`**, **`signOut`**, user shape used in sidebar.
+- **§4.6** — **`requireAuthGuard`**.
+- **§4.9** — Login chrome parity (glass card, frosted bars, eyebrow patterns).
+- **§2** — **`mss-*`** utilities and tokens consumed throughout **`dashboard-page.scss`**.
+
+---
+
 ## 5. Home page (`Home`)
 
 **Files:** `src/app/home/home.ts`, `home.html`, `home.scss`
@@ -988,6 +1291,10 @@ Uses **`--surface`** so the page reads slightly different from base-bg sections.
 | Full solutions | `src/app/home/sections/solutions/*`, `src/app/solutions/solutions-page.*` |
 | About | `src/app/home/sections/about/*`, `src/app/about/about-page.*` |
 | Shared (nav, footer, spinner, auth, guards) | `src/app/shared/nav/*`, `shared/footer/*`, `shared/loading-spinner/*`, `shared/services/auth.service.ts`, `shared/guards/*` |
+| Dashboard portal shell + styles | `src/app/dashboard/dashboard-page.ts`, `dashboard-page.html`, `dashboard-page.scss` |
+| Dashboard overview | `src/app/dashboard/overview/dashboard-overview-page.ts`, `.html` |
+| Dashboard request change / report issue | `src/app/dashboard/request-change/*`, `src/app/dashboard/report-issue/*` |
+| Dashboard demo seed data | `src/app/shared/dashboard/dashboard-seeded-example.ts` |
 | App shell | `src/app/app.ts`, `app.html`, `app.scss` |
 
 ---
@@ -1000,4 +1307,4 @@ Uses **`--surface`** so the page reads slightly different from base-bg sections.
 
 ---
 
-*Internal layout/theme reference for Mustard Seed Solutions marketing pages (Home, About, Process, Solutions).*
+*Internal layout/theme reference for Mustard Seed Solutions marketing pages (Home, About, Process, Solutions) and the authenticated client dashboard portal (**§4.10**).*

@@ -28,6 +28,18 @@
   --mss-danger-text: #fca5a5;
   --mss-danger-border: color-mix(in oklab, #ef4444 45%, var(--mss-border-default));
 
+  --mss-success-fg: #4ade80;
+  --mss-success-text: #bbf7d0;
+  --mss-success-bg: color-mix(in oklab, #22c55e 22%, var(--mss-bg-elevated));
+  --mss-success-border: color-mix(in oklab, #4ade80 45%, var(--mss-border-subtle));
+  --mss-success-glow: color-mix(in oklab, #4ade80 70%, transparent);
+
+  --mss-violet: #a78bfa;
+  --mss-violet-strong: #8b5cf6;
+  --mss-glow-violet: rgba(139, 92, 246, 0.32);
+
+  --mss-rail-active: linear-gradient(180deg, var(--mss-sky), var(--mss-sky-deep));
+
   --mss-radius-sm: 8px;
   --mss-radius-md: 12px;
   --mss-radius-lg: 16px;

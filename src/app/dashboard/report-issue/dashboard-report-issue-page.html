@@ -1,35 +1,58 @@
 <div class="dashboard__content dashboard-form-page dashboard-form-page--issue">
+  <div class="dashboard-page-atmosphere" aria-hidden="true">
+    <div class="dashboard-page-atmosphere__grid"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--orange"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--violet"></div>
+  </div>
+
   <div class="dashboard__page-intro">
     <p class="mss-eyebrow mss-eyebrow--orange">Report an issue</p>
-    <h2 class="dashboard__title">Tell us what went wrong</h2>
-    <p class="dashboard__summary">
+    <h2 class="mss-h3">Tell us what went wrong</h2>
+    <p class="dashboard__summary mss-body mss-text-secondary">
       Even a short note helps. You can send screenshots after we reply.
     </p>
   </div>
 
   <div class="dashboard-form-page__layout">
-    <form class="dashboard-card dashboard-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <form
+      class="dashboard-card dashboard-card--hairline dashboard-form"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      novalidate
+    >
       <header>
-        <h3>What you noticed</h3>
+        <h3 class="mss-h4">What you noticed</h3>
         <p>The more specific you can be, the faster we can reproduce it.</p>
       </header>
 
       @if (submitted()) {
-        <div class="dashboard-form__success dashboard-form__success--orange" role="status">
-          Thanks for the heads-up. We will take a look and reply with an update.
+        <div class="dashboard-form__success" role="status">
+          <span class="dashboard-form__success-icon" aria-hidden="true">
+            <i class="pi pi-info-circle"></i>
+          </span>
+          <span>Thanks for the heads-up. We will take a look and reply with an update.</span>
         </div>
       }
 
-      <label class="dashboard-form__field">
+      <label
+        class="dashboard-form__field"
+        [class.dashboard-form__field--invalid]="isInvalid('pageUrl')"
+      >
         <span>Where did you see it?</span>
         <input
           type="text"
           formControlName="pageUrl"
           placeholder="Example: homepage, contact page, or a link"
         />
+        @if (isInvalid('pageUrl')) {
+          <p class="dashboard-form__error">{{ errorFor('pageUrl') }}</p>
+        }
       </label>
 
-      <label class="dashboard-form__field">
+      <label
+        class="dashboard-form__field"
+        [class.dashboard-form__field--invalid]="isInvalid('issueType')"
+      >
         <span>What kind of problem is it?</span>
         <select formControlName="issueType">
           <option>Something looks wrong</option>
@@ -37,9 +60,15 @@
           <option>Text or photo is incorrect</option>
           <option>This page feels slow</option>
         </select>
+        @if (isInvalid('issueType')) {
+          <p class="dashboard-form__error">{{ errorFor('issueType') }}</p>
+        }
       </label>
 
-      <label class="dashboard-form__field">
+      <label
+        class="dashboard-form__field"
+        [class.dashboard-form__field--invalid]="isInvalid('device')"
+      >
         <span>What were you using?</span>
         <select formControlName="device">
           <option>Desktop computer</option>
@@ -47,32 +76,50 @@
           <option>Phone</option>
           <option>Tablet</option>
         </select>
+        @if (isInvalid('device')) {
+          <p class="dashboard-form__error">{{ errorFor('device') }}</p>
+        }
       </label>
 
-      <label class="dashboard-form__field">
+      <label
+        class="dashboard-form__field"
+        [class.dashboard-form__field--invalid]="isInvalid('details')"
+      >
         <span>What happened?</span>
         <textarea
           formControlName="details"
           rows="6"
           placeholder="What you clicked, what you saw, and what you expected instead."
         ></textarea>
+        @if (isInvalid('details')) {
+          <p class="dashboard-form__error">{{ errorFor('details') }}</p>
+        }
       </label>
 
-      <button class="dashboard-form__submit dashboard-form__submit--orange" type="submit">
-        Send report
-      </button>
+      <div class="dashboard-form__submit">
+        <p-button
+          type="submit"
+          label="Send report"
+          icon="pi pi-send"
+          size="large"
+          [rounded]="true"
+          [loading]="submitting()"
+          [disabled]="submitting()"
+        />
+      </div>
     </form>
 
-    <aside class="dashboard-card dashboard-help" aria-labelledby="issue-help-heading">
-      <h3 id="issue-help-heading">Details that help</h3>
+    <aside
+      class="dashboard-card dashboard-card--hairline dashboard-help"
+      aria-labelledby="issue-help-heading"
+    >
+      <h3 id="issue-help-heading" class="mss-h4">Details that help</h3>
       <div class="dashboard-help__list">
         @for (tip of tips; track tip.label) {
           <article>
-            <span aria-hidden="true"></span>
-            <div>
-              <h4>{{ tip.label }}</h4>
-              <p>{{ tip.description }}</p>
-            </div>
+            <span class="dashboard-help__dot" aria-hidden="true"></span>
+            <h4>{{ tip.label }}</h4>
+            <p>{{ tip.description }}</p>
           </article>
         }
       </div>

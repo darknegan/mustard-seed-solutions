@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
 
 interface ChangeExample {
   readonly title: string;
@@ -9,7 +10,7 @@ interface ChangeExample {
 @Component({
   selector: 'app-dashboard-request-change-page',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ButtonModule, ReactiveFormsModule],
   templateUrl: './dashboard-request-change-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -17,10 +18,11 @@ export class DashboardRequestChangePageComponent {
   private readonly fb = inject(NonNullableFormBuilder);
 
   protected readonly submitted = signal(false);
+  protected readonly submitting = signal(false);
 
   protected readonly form = this.fb.group({
     updateType: ['Text update', Validators.required],
-    pageArea: ['', Validators.required],
+    pageArea: ['', [Validators.required, Validators.minLength(2)]],
     details: ['', [Validators.required, Validators.minLength(12)]],
     timing: ['This week', Validators.required],
   });
@@ -40,12 +42,36 @@ export class DashboardRequestChangePageComponent {
     },
   ];
 
+  protected isInvalid(controlName: keyof typeof this.form.controls): boolean {
+    const control = this.form.controls[controlName];
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  protected errorFor(controlName: keyof typeof this.form.controls): string {
+    const control = this.form.controls[controlName];
+    if (!control.errors) {
+      return '';
+    }
+    if (control.errors['required']) {
+      return 'Please fill this in so we know what to update.';
+    }
+    if (control.errors['minlength']) {
+      const requested: number = control.errors['minlength'].requiredLength;
+      return `A little more detail helps—try at least ${requested} characters.`;
+    }
+    return 'Please check this field.';
+  }
+
   protected submit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.submitted.set(true);
+    this.submitting.set(true);
+    setTimeout(() => {
+      this.submitting.set(false);
+      this.submitted.set(true);
+    }, 600);
   }
 }

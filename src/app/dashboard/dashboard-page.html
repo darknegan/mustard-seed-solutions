@@ -1,11 +1,19 @@
 <section class="dashboard" aria-labelledby="dashboard-heading">
   <aside class="dashboard__sidebar" aria-label="Client portal navigation">
-    <div class="dashboard__sidebar-glow" aria-hidden="true"></div>
-    <a class="dashboard__brand" href="/" aria-label="Mustard Seed Solutions home">
-      <span class="dashboard__brand-mark" aria-hidden="true"></span>
-      <span>
-        <strong>Mustard Seed</strong>
-        <small>Client portal</small>
+    <div class="dashboard__sidebar-atmosphere" aria-hidden="true">
+      <div class="dashboard__sidebar-grid"></div>
+      <div class="dashboard__sidebar-glow dashboard__sidebar-glow--sky"></div>
+      <div class="dashboard__sidebar-glow dashboard__sidebar-glow--orange"></div>
+      <div class="dashboard__sidebar-glow dashboard__sidebar-glow--violet"></div>
+    </div>
+
+    <a class="dashboard__brand" routerLink="/" aria-label="Mustard Seed Solutions home">
+      <span class="dashboard__brand-mark" aria-hidden="true">
+        <img class="dashboard__brand-logo" src="/mustard-seed-glyph-logo.svg" alt="" />
+      </span>
+      <span class="dashboard__wordmark">
+        <span class="dashboard__wordmark-top">Mustard Seed</span>
+        <span class="dashboard__wordmark-bottom">Client portal</span>
       </span>
     </a>
 
@@ -18,45 +26,104 @@
           routerLinkActive="is-active"
           [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
         >
-          <span class="dashboard__nav-icon" [attr.data-icon]="item.icon" aria-hidden="true"></span>
+          <span class="dashboard__nav-icon" aria-hidden="true">
+            <i [class]="item.icon"></i>
+          </span>
           <span>{{ item.label }}</span>
         </a>
       }
     </nav>
 
     <div class="dashboard__account">
-      <div class="dashboard__avatar" aria-hidden="true">AC</div>
-      <div class="dashboard__account-meta">
-        <strong>AdventureCon</strong>
-        <span>Your site</span>
+      <div class="dashboard__avatar" aria-hidden="true">
+        @if (avatarInitials()) {
+          <span>{{ avatarInitials() }}</span>
+        } @else {
+          <i class="pi pi-user"></i>
+        }
       </div>
-      <button type="button" class="dashboard__sign-out" (click)="signOut()">Sign out</button>
+      <div class="dashboard__account-meta">
+        <strong>{{ companyDisplay() }}</strong>
+        <span>{{ siteHostDisplay() }}</span>
+      </div>
+      <button
+        type="button"
+        class="p-button p-component p-button-rounded mss-btn-ghost dashboard__sign-out-button"
+        (click)="signOut()"
+      >
+        <span class="p-button-label">Sign out</span>
+      </button>
     </div>
   </aside>
 
   <div class="dashboard__mobile-top">
-    <a class="dashboard__mobile-brand" href="/" aria-label="Mustard Seed Solutions home">
-      <span class="dashboard__brand-mark" aria-hidden="true"></span>
+    <a class="dashboard__mobile-brand" routerLink="/" aria-label="Mustard Seed Solutions home">
+      <span class="dashboard__brand-mark" aria-hidden="true">
+        <img class="dashboard__brand-logo" src="/mustard-seed-glyph-logo.svg" alt="" />
+      </span>
       <strong>Mustard Seed</strong>
     </a>
-    <button type="button" class="dashboard__menu" aria-label="Open dashboard menu">
+    <button
+      type="button"
+      class="dashboard__menu"
+      [attr.aria-expanded]="mobileMenuOpen()"
+      aria-controls="dashboard-mobile-menu"
+      aria-label="Toggle dashboard menu"
+      (click)="toggleMobileMenu()"
+    >
       <span></span>
       <span></span>
       <span></span>
     </button>
   </div>
 
+  @if (mobileMenuOpen()) {
+    <div
+      id="dashboard-mobile-menu"
+      class="dashboard__mobile-menu"
+      role="dialog"
+      aria-label="Dashboard menu"
+    >
+      @for (item of navItems; track item.route) {
+        <a
+          class="dashboard__mobile-menu-link"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+          (click)="closeMobileMenu()"
+        >
+          <span class="dashboard__nav-icon" aria-hidden="true">
+            <i [class]="item.icon"></i>
+          </span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+      <button
+        type="button"
+        class="p-button p-component p-button-rounded mss-btn-ghost dashboard__mobile-sign-out"
+        (click)="signOut()"
+      >
+        <span class="p-button-label">Sign out</span>
+      </button>
+    </div>
+  }
+
   <main class="dashboard__main">
-    <div class="dashboard__main-atmosphere" aria-hidden="true"></div>
+    <div class="dashboard__main-atmosphere" aria-hidden="true">
+      <div class="dashboard__main-grid"></div>
+      <div class="dashboard__main-glow dashboard__main-glow--sky"></div>
+      <div class="dashboard__main-glow dashboard__main-glow--orange"></div>
+      <div class="dashboard__main-glow dashboard__main-glow--violet"></div>
+    </div>
     <header class="dashboard__header">
       <div class="dashboard__header-left">
         <div class="dashboard__header-titles">
-          <h1 id="dashboard-heading">{{ pageTitle() }}</h1>
-          <p class="dashboard__header-greeting">{{ greeting() }}</p>
+          <h1 id="dashboard-heading" class="mss-h2">{{ pageTitle() }}</h1>
+          <p class="dashboard__header-greeting mss-body-sm mss-text-muted">{{ greeting() }}</p>
         </div>
         <span class="dashboard__site-pill">
           <span class="dashboard__site-pulse" aria-hidden="true"></span>
-          adventurecon.com
+          {{ siteHostDisplay() }}
         </span>
       </div>
     </header>
@@ -73,7 +140,9 @@
         routerLinkActive="is-active"
         [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
       >
-        <span class="dashboard__tab-icon" [attr.data-icon]="item.icon" aria-hidden="true"></span>
+        <span class="dashboard__tab-icon" aria-hidden="true">
+          <i [class]="item.icon"></i>
+        </span>
         <small>{{ item.shortLabel }}</small>
       </a>
     }
