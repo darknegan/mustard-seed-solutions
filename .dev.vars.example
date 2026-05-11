@@ -1,0 +1,6 @@
+# Copy to .dev.vars for `wrangler dev` (same keys as Worker secrets in the dashboard).
+# Never commit .dev.vars.
+
+JWT_SECRET=
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=

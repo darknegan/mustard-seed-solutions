@@ -1,9 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "mustard-seed-solutions",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-04-24",
   "assets": {
     "directory": "dist/mustard-seed-solutions/browser",
+    "binding": "ASSETS",
     "not_found_handling": "single-page-application"
   },
   "observability": {

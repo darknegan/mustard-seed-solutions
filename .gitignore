@@ -39,6 +39,9 @@ testem.log
 /typings
 __screenshots__/
 
+# Cloudflare Worker local secrets (wrangler dev)
+.dev.vars
+
 # Server
 server/.env
 server/dist
