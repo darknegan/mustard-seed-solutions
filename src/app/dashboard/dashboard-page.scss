@@ -283,6 +283,29 @@
   color: currentColor;
 }
 
+.dashboard__nav-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.dashboard__nav-badge {
+  flex-shrink: 0;
+  min-width: 20px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--mss-bg-base);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--mss-orange-strong) 88%, white),
+    color-mix(in oklab, var(--mss-orange) 95%, var(--mss-sky))
+  );
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--mss-bg-base) 22%, transparent);
+}
+
 .dashboard__nav-link.is-active .dashboard__nav-icon {
   background: color-mix(in oklab, var(--mss-sky) 22%, var(--mss-bg-card));
   border-color: color-mix(in oklab, var(--mss-sky) 38%, var(--mss-border-subtle));
@@ -451,7 +474,9 @@
 .dashboard__scroll > app-dashboard-overview-page,
 .dashboard__scroll > app-dashboard-documents-page,
 .dashboard__scroll > app-dashboard-request-change-page,
-.dashboard__scroll > app-dashboard-report-issue-page {
+.dashboard__scroll > app-dashboard-report-issue-page,
+.dashboard__scroll > app-dashboard-mock-planning-brief-page,
+.dashboard__scroll > app-dashboard-admin-mock-briefs-page {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -911,6 +936,15 @@
 
 .dashboard-activity__item[data-accent='success'] .dashboard-activity__dot::after {
   background: var(--mss-success-fg);
+}
+
+.dashboard-activity__item[data-accent='violet'] .dashboard-activity__dot {
+  border-color: var(--mss-violet-strong);
+  box-shadow: 0 0 14px var(--mss-glow-violet);
+}
+
+.dashboard-activity__item[data-accent='violet'] .dashboard-activity__dot::after {
+  background: var(--mss-violet);
 }
 
 .dashboard-activity__item h4 {
@@ -1389,6 +1423,174 @@
   line-height: 1.45;
 }
 
+/* Design planning — 3-step wizard (research §2 tokens, §3.1 sky/violet accents, §4.10.5 cards) */
+.design-planning-stepper {
+  display: grid;
+  gap: 20px;
+}
+
+.design-planning-stepper__track {
+  margin: 0;
+  padding: 0;
+}
+
+.design-planning-stepper__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.design-planning-stepper__item {
+  position: relative;
+  min-width: 0;
+}
+
+.design-planning-stepper__item--current .design-planning-stepper__index {
+  border-color: color-mix(in oklab, var(--mss-sky) 55%, var(--mss-border-default));
+  background: color-mix(in oklab, var(--mss-sky) 18%, var(--mss-bg-elevated));
+  color: var(--mss-sky-strong);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--mss-sky) 25%, transparent),
+    0 0 18px color-mix(in oklab, var(--mss-sky) 22%, transparent);
+}
+
+.design-planning-stepper__item--done .design-planning-stepper__index {
+  border-color: color-mix(in oklab, var(--mss-violet) 45%, var(--mss-border-default));
+  background: color-mix(in oklab, var(--mss-violet) 14%, var(--mss-bg-elevated));
+  color: var(--mss-violet-strong);
+}
+
+.design-planning-stepper__item--upcoming .design-planning-stepper__index {
+  border-color: var(--mss-border-subtle);
+  background: var(--mss-bg-elevated);
+  color: var(--mss-text-muted);
+}
+
+.design-planning-stepper__hit {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 6px 12px;
+  border: none;
+  border-radius: var(--mss-radius-lg);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  cursor: default;
+}
+
+.design-planning-stepper__hit:not(.design-planning-stepper__hit--static) {
+  cursor: pointer;
+}
+
+.design-planning-stepper__hit:not(.design-planning-stepper__hit--static):hover {
+  background: color-mix(in oklab, var(--mss-sky) 8%, transparent);
+}
+
+.design-planning-stepper__hit:not(.design-planning-stepper__hit--static):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--mss-sky) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.design-planning-stepper__hit--static {
+  cursor: default;
+}
+
+.design-planning-stepper__index {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--mss-border-default);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.design-planning-stepper__index .pi {
+  font-size: 15px;
+}
+
+.design-planning-stepper__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mss-text-primary);
+  line-height: 1.3;
+}
+
+.design-planning-stepper__hint {
+  display: block;
+  font-size: 11px;
+  line-height: 1.35;
+  max-width: 28ch;
+  margin-inline: auto;
+}
+
+.design-planning-stepper__panel {
+  display: grid;
+  gap: 18px;
+  padding-top: 4px;
+}
+
+.design-planning-stepper__panel-title {
+  margin: 0;
+}
+
+.design-planning-stepper__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.design-planning-stepper__footer-spacer {
+  flex: 1 1 12px;
+}
+
+.design-planning-stepper__footer p-button .p-button {
+  min-height: 48px;
+}
+
+.design-planning-stepper__footer p-button:last-child .p-button {
+  min-width: min(100%, 220px);
+}
+
+@media (max-width: 600px) {
+  .design-planning-stepper__hint {
+    display: none;
+  }
+
+  .design-planning-stepper__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .design-planning-stepper__footer-spacer {
+    display: none;
+  }
+
+  .design-planning-stepper__footer p-button {
+    width: 100%;
+  }
+
+  .design-planning-stepper__footer p-button .p-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .design-planning-stepper__item--current .design-planning-stepper__index {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--mss-sky) 25%, transparent);
+  }
+}
+
 .dashboard-form__success {
   display: grid;
   grid-template-columns: 24px minmax(0, 1fr);
@@ -1469,6 +1671,46 @@
   color: var(--mss-danger-text);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.dashboard-form__banner-error {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: var(--mss-radius-md);
+  border: 1px solid var(--mss-danger-border);
+  background: var(--mss-danger-bg);
+  color: var(--mss-danger-text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.dashboard-form__actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-top: 8px;
+}
+
+.dashboard-form__text-button {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  color: var(--mss-sky);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dashboard-form__text-button:hover,
+.dashboard-form__text-button:focus-visible {
+  color: var(--mss-sky-strong);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-form__text-button {
+    transition: none;
+  }
 }
 
 .dashboard-form__submit {
@@ -1970,6 +2212,33 @@
     text-decoration: none;
   }
 
+  .dashboard__tab-icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dashboard__tab-badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    min-width: 18px;
+    padding: 1px 5px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--mss-bg-base);
+    background: linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--mss-orange-strong) 88%, white),
+      color-mix(in oklab, var(--mss-orange) 95%, var(--mss-sky))
+    );
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--mss-bg-base) 22%, transparent);
+  }
+
   .dashboard__tabbar a:focus-visible {
     outline: 2px solid var(--mss-sky);
     outline-offset: -4px;
@@ -2080,4 +2349,36 @@
     border-color: color-mix(in oklab, var(--mss-sky) 30%, var(--mss-border-default));
     color: var(--mss-text-primary);
   }
+}
+
+.dashboard-admin-briefs {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.dashboard-admin-briefs__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  color: var(--mss-text-secondary);
+}
+
+.dashboard-admin-briefs__table th,
+.dashboard-admin-briefs__table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--mss-border-subtle);
+  vertical-align: top;
+}
+
+.dashboard-admin-briefs__table th {
+  color: var(--mss-text-muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dashboard-admin-briefs__table td {
+  color: var(--mss-text-primary);
 }

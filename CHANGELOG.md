@@ -25,6 +25,21 @@ Release notes should list changes **newest first** within each section. **Omit a
 
 ### Added
 
+- **Todos** at `/dashboard/todos`: open + completed lists, default **Design planning** virtual task until a `mock_planning_briefs` row exists, `PATCH /api/client/todos/:id` for done/reopen. **`GET /api/client/todos/summary`** for the shell badge. **`client_todos`** table (`server/src/db/schema.sql` + `migrate.ts`). **Admin** at `/dashboard/admin/client-todos` (`GET/POST/PATCH/DELETE` under `/api/admin/todos`). Nav: **Todos** replaces top-level **Design planning**; Design planning remains at `/dashboard/onboarding/design-planning-brief`. **Worker** mirrors todo routes in `worker/todos.ts`.
+- **Design planning** at `/dashboard/onboarding/design-planning-brief`: onboarding form with optional **local drafts**, **print summary**, **three-step wizard** (project & goal → audience & pages → look & timing), and submit to **`POST /api/client/mock-planning-brief`** (unchanged API path). **`mock_planning_briefs`** Supabase table (see `server/src/db/schema.sql` + `migrate.ts`). **Admin** list at `/dashboard/admin/design-planning-briefs` (JWT `role: admin`). Same routes on the **Cloudflare Worker** for production. Plan + API contract: **`docs/plans/designPlanning.plan.md`** (§6 wizard, §11 HTTP). Overview **Next steps** + seeded **Recent activity** use **Design planning** wording.
+
+### Changed
+
+- **Overview** quick action: first shortcut is **Your tasks** → `/dashboard/todos` (was direct Design planning link).
+
+## [1.0.0] - 2026-05-10
+
+First production release on `main`: client dashboard and related site work merged **2026-05-10**; Cloudflare Worker auth API merged **2026-05-11** (same release line).
+
+### Added
+
+- **Cloudflare Worker** (`worker/index.ts`) + **`wrangler.jsonc`**: serves the built Angular SPA from `dist/mustard-seed-solutions/browser` with SPA fallback; **`/api/health`**; **`/api/auth/signup`**, **`/api/auth/login`** (bcrypt password check, Supabase `users` table), **`/api/auth/me`** (Bearer JWT via **jose**). **`package.json`** scripts **`deploy`** (`ng build && wrangler deploy`) and **`dev:worker`** (`ng build && wrangler dev`); **`tsconfig.worker.json`**; **`.dev.vars.example`** for local Worker secrets; **`.gitignore`** excludes **`.dev.vars`**.
+- **`docs/plans/login.plan.md`**: notes for login UI and flow work alongside **`docs/research.md`** updates from the same effort.
 - **Client dashboard portal** at `/dashboard`: lazy-loaded authenticated shell (`requireAuthGuard` + `canActivateChild`), chrome-free app layout (`hideChrome`), sidebar navigation, sticky main header, mobile top bar + slide-down menu + bottom tab bar, and nested routes for **Overview**, **My Documents**, **Request a Change**, and **Report an Issue**.
 - **`dashboard-seeded-example.ts`** (`src/app/shared/dashboard/`): centralized demo datasets for overview stats, activity timeline, and documents; **`emailShowsDashboardSeededExample()`** gates seeded UI vs empty-state copy for non-demo accounts (demo email: `drakedavisdev@gmail.com`).
 - **Portal styling** in `dashboard-page.scss` (shell **`ViewEncapsulation.None`**): card system, page atmospheres, overview stats/activity/next-steps panels, documents folder/file UI, shared form + help-aside layout for change/issue flows, empty states, and **`dashboard__mobile-status--neutral`** for non-demo overview/documents pills on small screens.
@@ -36,6 +51,8 @@ Release notes should list changes **newest first** within each section. **Omit a
 
 ### Changed
 
+- **`angular.json`**: raised **`anyComponentStyle`** bundle budget thresholds (**warning** 30 → 40 kB, **error** 32 → 48 kB) so the enlarged dashboard stylesheets still pass production budgets.
+- **Login** experience: **`login-page.*`** restyled to match the main site theme; home **Solutions** section — Care plan toggle sublabel (**“Subscription”**), en-dash spacing in tier prices for readability.
 - **`server/src/config/env.ts`**: trim `SUPABASE_URL` and service-role key; **`validateSupabaseProjectUrl()`** on startup — rejects URLs that look like the Supabase dashboard or main marketing site (path contains `/dashboard`, or host `app.supabase.com` / `supabase.com`), with actionable error text.
 - **`server/src/config/supabase.ts`**: **`createClient`** uses **`env.supabaseUrl`** and **`env.supabaseServiceRoleKey`** from **`env.ts`** (aligned with trimmed values).
 

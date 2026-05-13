@@ -59,7 +59,7 @@
 
       @if (activities().length) {
         <ol class="dashboard-activity__list">
-          @for (activity of activities(); track activity.title) {
+          @for (activity of activities(); track activity.id) {
             <li class="dashboard-activity__item" [attr.data-accent]="activity.accent">
               <span class="dashboard-activity__dot" aria-hidden="true"></span>
               <h4>{{ activity.title }}</h4>

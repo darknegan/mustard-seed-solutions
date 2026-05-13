@@ -17,12 +17,14 @@ import {
 import { filter } from 'rxjs';
 
 import { AuthService } from '@app/shared/services/auth.service';
+import { TodosService } from '@app/shared/services/todos.service';
 
 interface DashboardNavItem {
   readonly label: string;
   readonly shortLabel: string;
   readonly route: string;
   readonly icon: string;
+  readonly todoBadge?: boolean;
 }
 
 @Component({
@@ -37,12 +39,13 @@ interface DashboardNavItem {
 export class DashboardPageComponent {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  private readonly todos = inject(TodosService);
 
   protected readonly pageTitle = signal('Dashboard');
   protected readonly greeting = signal("Here's what's happening with your site today.");
   protected readonly mobileMenuOpen = signal(false);
 
-  protected readonly navItems: readonly DashboardNavItem[] = [
+  private readonly baseNavItems: readonly DashboardNavItem[] = [
     {
       label: 'Overview',
       shortLabel: 'Overview',
@@ -54,6 +57,13 @@ export class DashboardPageComponent {
       shortLabel: 'Docs',
       route: '/dashboard/documents',
       icon: 'pi pi-folder',
+    },
+    {
+      label: 'Todos',
+      shortLabel: 'Todos',
+      route: '/dashboard/todos',
+      icon: 'pi pi-check-square',
+      todoBadge: true,
     },
     {
       label: 'Request a Change',
@@ -68,6 +78,36 @@ export class DashboardPageComponent {
       icon: 'pi pi-flag-fill',
     },
   ];
+
+  protected readonly navItems = computed((): readonly DashboardNavItem[] => {
+    const user = this.auth.user();
+    if (user?.role === 'admin') {
+      return [
+        ...this.baseNavItems,
+        {
+          label: 'Client tasks',
+          shortLabel: 'Tasks',
+          route: '/dashboard/admin/client-todos',
+          icon: 'pi pi-list',
+        },
+        {
+          label: 'Submitted design plans',
+          shortLabel: 'Plans',
+          route: '/dashboard/admin/design-planning-briefs',
+          icon: 'pi pi-table',
+        },
+      ];
+    }
+    return this.baseNavItems;
+  });
+
+  protected readonly todoNavBadgeText = computed(() => {
+    const n = this.todos.openCount();
+    if (n < 1) {
+      return '';
+    }
+    return n > 9 ? '9+' : String(n);
+  });
 
   protected readonly avatarInitials = computed(() => {
     const user = this.auth.user();
@@ -103,6 +143,7 @@ export class DashboardPageComponent {
 
   constructor() {
     this.updatePageLabels();
+    void this.todos.fetchSummary();
 
     this.router.events
       .pipe(
@@ -112,7 +153,20 @@ export class DashboardPageComponent {
       .subscribe(() => {
         this.updatePageLabels();
         this.mobileMenuOpen.set(false);
+        void this.todos.fetchSummary();
       });
+  }
+
+  protected navAriaLabel(item: DashboardNavItem): string | undefined {
+    if (!item.todoBadge) {
+      return undefined;
+    }
+    const n = this.todos.openCount();
+    if (n < 1) {
+      return undefined;
+    }
+    const suffix = n === 1 ? '1 open task' : `${n} open tasks`;
+    return `Todos, ${suffix}`;
   }
 
   protected toggleMobileMenu(): void {

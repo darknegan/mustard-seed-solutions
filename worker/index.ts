@@ -2,6 +2,8 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 import { SignJWT, jwtVerify } from 'jose';
 
+import { routeTodos } from './todos.js';
+
 export interface Env {
   ASSETS: Fetcher;
   JWT_SECRET: string;
@@ -186,6 +188,172 @@ async function login(request: Request, env: Env): Promise<Response> {
   });
 }
 
+async function getAuthContext(request: Request, env: Env): Promise<{ userId: string; role: string } | Response> {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return json({ error: 'Not authenticated.' }, 401);
+  }
+  const token = authHeader.slice(7);
+  try {
+    const key = new TextEncoder().encode(env.JWT_SECRET);
+    const { payload } = await jwtVerify(token, key);
+    const userId = payload['userId'];
+    const role = payload['role'];
+    if (typeof userId !== 'string' || typeof role !== 'string') {
+      return json({ error: 'Invalid or expired token.' }, 401);
+    }
+    return { userId, role };
+  } catch {
+    return json({ error: 'Invalid or expired token.' }, 401);
+  }
+}
+
+interface MockPlanningBriefPayload {
+  readonly projectName: string;
+  readonly primaryGoal: string;
+  readonly audience: string;
+  readonly mustHavePages: string;
+  readonly brandNotes: string;
+  readonly references: string;
+  readonly deadline: string;
+}
+
+function parseMockPlanningBriefPayload(value: object): MockPlanningBriefPayload | null {
+  const read = (key: string): string | undefined => {
+    const v = Reflect.get(value, key);
+    return typeof v === 'string' ? v : undefined;
+  };
+  const projectName = read('projectName')?.trim() ?? '';
+  if (projectName.length < 2 || projectName.length > 500) {
+    return null;
+  }
+  const primaryGoal = read('primaryGoal')?.trim() ?? '';
+  if (primaryGoal.length < 1) {
+    return null;
+  }
+  const audience = read('audience')?.trim() ?? '';
+  if (audience.length < 12 || audience.length > 20000) {
+    return null;
+  }
+  const mustHavePages = read('mustHavePages')?.trim() ?? '';
+  if (mustHavePages.length < 12 || mustHavePages.length > 20000) {
+    return null;
+  }
+  const brandNotes = read('brandNotes')?.trim() ?? '';
+  if (brandNotes.length > 20000) {
+    return null;
+  }
+  const references = read('references')?.trim() ?? '';
+  if (references.length > 20000) {
+    return null;
+  }
+  const deadline = read('deadline')?.trim() ?? '';
+  if (deadline.length < 1) {
+    return null;
+  }
+  return { projectName, primaryGoal, audience, mustHavePages, brandNotes, references, deadline };
+}
+
+async function postMockPlanningBrief(request: Request, env: Env): Promise<Response> {
+  const auth = await getAuthContext(request, env);
+  if (auth instanceof Response) {
+    return auth;
+  }
+
+  let body: object;
+  try {
+    body = (await request.json()) as object;
+  } catch {
+    return json({ error: 'Invalid JSON body.' }, 400);
+  }
+
+  const parsed = parseMockPlanningBriefPayload(body);
+  if (!parsed) {
+    return json({ error: 'Please check the form and try again.' }, 400);
+  }
+
+  const supabase = getSupabase(env);
+
+  const { data, error } = await supabase
+    .from('mock_planning_briefs')
+    .insert({
+      user_id: auth.userId,
+      project_name: parsed.projectName,
+      primary_goal: parsed.primaryGoal,
+      audience: parsed.audience,
+      must_have_pages: parsed.mustHavePages,
+      brand_notes: parsed.brandNotes,
+      reference_notes: parsed.references,
+      deadline: parsed.deadline,
+    })
+    .select('id, created_at')
+    .single();
+
+  if (error || !data) {
+    console.error('mock_planning_briefs insert:', error);
+    return json({ error: 'Could not save your brief. Please try again.' }, 500);
+  }
+
+  return json(
+    {
+      id: data.id as string,
+      createdAt: data.created_at as string,
+    },
+    201,
+  );
+}
+
+async function getAdminMockPlanningBriefs(request: Request, env: Env): Promise<Response> {
+  const auth = await getAuthContext(request, env);
+  if (auth instanceof Response) {
+    return auth;
+  }
+  if (auth.role !== 'admin') {
+    return json({ error: 'You do not have access to this list.' }, 403);
+  }
+
+  const supabase = getSupabase(env);
+
+  const { data: rows, error } = await supabase
+    .from('mock_planning_briefs')
+    .select(
+      'id, user_id, project_name, primary_goal, audience, must_have_pages, brand_notes, reference_notes, deadline, created_at',
+    )
+    .order('created_at', { ascending: false })
+    .limit(200);
+
+  if (error || !rows) {
+    console.error('mock_planning_briefs list:', error);
+    return json({ error: 'Could not load briefs.' }, 500);
+  }
+
+  const userIds = [...new Set(rows.map((r) => r.user_id as string))];
+  const { data: users, error: userErr } = await supabase.from('users').select('id, email').in('id', userIds);
+
+  if (userErr || !users) {
+    console.error('users lookup for briefs:', userErr);
+    return json({ error: 'Could not load briefs.' }, 500);
+  }
+
+  const emailById = new Map(users.map((u) => [u.id as string, u.email as string]));
+
+  return json({
+    briefs: rows.map((r) => ({
+      id: r.id as string,
+      userId: r.user_id as string,
+      clientEmail: emailById.get(r.user_id as string) ?? '',
+      projectName: r.project_name as string,
+      primaryGoal: r.primary_goal as string,
+      audience: r.audience as string,
+      mustHavePages: r.must_have_pages as string,
+      brandNotes: r.brand_notes as string,
+      references: r.reference_notes as string,
+      deadline: r.deadline as string,
+      createdAt: r.created_at as string,
+    })),
+  });
+}
+
 async function me(request: Request, env: Env): Promise<Response> {
   const authHeader = request.headers.get('Authorization');
 
@@ -264,6 +432,19 @@ export default {
 
     if (url.pathname.startsWith('/api/auth')) {
       return handleAuth(request, env);
+    }
+
+    if (url.pathname === '/api/client/mock-planning-brief' && request.method === 'POST') {
+      return postMockPlanningBrief(request, env);
+    }
+
+    if (url.pathname === '/api/admin/mock-planning-briefs' && request.method === 'GET') {
+      return getAdminMockPlanningBriefs(request, env);
+    }
+
+    const todosResponse = await routeTodos(request, env, json);
+    if (todosResponse !== null) {
+      return todosResponse;
     }
 
     return env.ASSETS.fetch(request);

@@ -833,7 +833,7 @@ Documented in [`plans/login.plan.md`](plans/login.plan.md) **Out of scope:** no 
 - **`.dashboard__main`** — column flex; **`min-height: 0`** so flex children can shrink.
 - **`.dashboard__scroll`** — **`overflow: hidden`**; contains positioned outlet.
 - **`.dashboard__scroll > router-outlet`** — **`position: absolute; inset: 0`**.
-- **Routed hosts** (`app-dashboard-overview-page`, …-documents-, …-request-change-, …-report-issue-) — **`position: absolute; inset: 0`**, **`display: flex; flex-direction: column`**, **`overflow: hidden`**.
+- **Routed hosts** (`app-dashboard-overview-page`, …-documents-, …-request-change-, …-report-issue-, …-mock-planning-brief-, …-admin-mock-briefs-) — **`position: absolute; inset: 0`**, **`display: flex; flex-direction: column`**, **`overflow: hidden`**.
 - **`.dashboard__scroll .dashboard__content`** — **`flex: 1 1 0`**, **`min-height: 0`**, **`overflow-y: auto`**, **`scrollbar-gutter: stable`**, thin themed scrollbar, **`overscroll-behavior: contain`**.
 
 **Net effect:** Only **`.dashboard__content`** scrolls; header/sidebar/tab chrome stays fixed within the portal viewport.

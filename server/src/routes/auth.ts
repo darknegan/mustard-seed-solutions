@@ -128,6 +128,15 @@ authRouter.post('/login', loginValidation, async (req: Request, res: Response): 
     .maybeSingle();
 
   if (error || !user) {
+    const isProd = process.env['NODE_ENV'] === 'production';
+    if (error) {
+      console.error('[auth/login] Supabase:', error.message, error.code, error.details ?? '');
+    } else {
+      console.warn(
+        '[auth/login] No user row for this email' +
+          (isProd ? '.' : ` (normalized): ${email}`),
+      );
+    }
     res.status(401).json({ error: 'Invalid email or password.' });
     return;
   }
@@ -140,6 +149,7 @@ authRouter.post('/login', loginValidation, async (req: Request, res: Response): 
   const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
   if (!passwordMatch) {
+    console.warn('[auth/login] Password does not match stored hash for user id:', user.id);
     res.status(401).json({ error: 'Invalid email or password.' });
     return;
   }

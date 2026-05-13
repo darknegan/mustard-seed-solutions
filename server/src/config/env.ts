@@ -6,6 +6,25 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
+const supabaseTlsSkipVerifyRaw = (process.env['SUPABASE_TLS_SKIP_VERIFY'] ?? '').trim().toLowerCase();
+const supabaseTlsSkipVerify =
+  supabaseTlsSkipVerifyRaw === '1' ||
+  supabaseTlsSkipVerifyRaw === 'true' ||
+  supabaseTlsSkipVerifyRaw === 'yes';
+
+if (supabaseTlsSkipVerify && process.env['NODE_ENV'] === 'production') {
+  throw new Error(
+    'SUPABASE_TLS_SKIP_VERIFY cannot be set when NODE_ENV is production. Remove it from the environment.',
+  );
+}
+
+if (supabaseTlsSkipVerify) {
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+  console.warn(
+    '[config] SUPABASE_TLS_SKIP_VERIFY: outbound HTTPS will skip TLS certificate verification (local dev only). Prefer NODE_EXTRA_CA_CERTS or fixing the trust store.',
+  );
+}
+
 export const env = {
   port: parseInt(process.env['PORT'] ?? '3000', 10),
   jwtSecret: process.env['JWT_SECRET'] ?? '',

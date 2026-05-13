@@ -1,6 +1,6 @@
 {
   "name": "mustard-seed-solutions",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "homepage": "https://mustard-seed-solutions.com",
   "scripts": {
     "ng": "ng",

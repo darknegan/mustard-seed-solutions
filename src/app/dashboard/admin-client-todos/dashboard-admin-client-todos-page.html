@@ -1,0 +1,133 @@
+<div class="dashboard__content dashboard-form-page dashboard-form-page--change">
+  <div class="dashboard-page-atmosphere" aria-hidden="true">
+    <div class="dashboard-page-atmosphere__grid"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--sky"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--violet"></div>
+  </div>
+
+  <div class="dashboard__page-intro">
+    <p class="mss-eyebrow">Admin</p>
+    <h2 class="mss-h3">Client tasks</h2>
+    <p class="dashboard__summary mss-body mss-text-secondary">
+      Look up a client by email, then add or close tasks that show on their Todos page.
+    </p>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="dashboard-form__banner-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  <form class="dashboard-card dashboard-card--hairline dashboard-form" [formGroup]="searchForm" (ngSubmit)="loadForEmail()">
+    <header>
+      <h3 class="mss-h4">Find client</h3>
+    </header>
+    <label class="dashboard-form__field">
+      <span>Client email</span>
+      <input type="email" formControlName="email" autocomplete="email" />
+    </label>
+    <button type="submit" pButton [disabled]="loading()">
+      <span class="p-button-label">{{ loading() ? 'Loading…' : 'Load tasks' }}</span>
+    </button>
+  </form>
+
+  @if (targetUserId()) {
+    <form
+      class="dashboard-card dashboard-card--hairline dashboard-form dashboard-todos-admin-create"
+      [formGroup]="createForm"
+      (ngSubmit)="createTodo()"
+    >
+      <header>
+        <h3 class="mss-h4">Add task for this client</h3>
+      </header>
+      <label class="dashboard-form__field">
+        <span>Title</span>
+        <input type="text" formControlName="title" maxlength="500" />
+      </label>
+      <label class="dashboard-form__field">
+        <span>Details (optional)</span>
+        <textarea formControlName="description" rows="3"></textarea>
+      </label>
+      <label class="dashboard-form__field">
+        <span>Category</span>
+        <select formControlName="category">
+          <option value="general">General</option>
+          <option value="planning">Planning</option>
+          <option value="content">Content</option>
+          <option value="access">Access</option>
+        </select>
+      </label>
+      <label class="dashboard-form__field">
+        <span>Due (optional, ISO date)</span>
+        <input type="text" formControlName="dueAt" placeholder="2026-06-01T12:00:00.000Z" />
+      </label>
+      <button type="submit" pButton [disabled]="saving()">
+        <span class="p-button-label">{{ saving() ? 'Saving…' : 'Add task' }}</span>
+      </button>
+    </form>
+
+    @if (!todos().length) {
+      <p class="mss-body mss-text-secondary">No rows yet—add a task above, or the client only has the default Design planning step.</p>
+    } @else {
+      <div class="dashboard-admin-briefs">
+        <table class="dashboard-admin-briefs__table">
+          <thead>
+            <tr>
+              <th scope="col">Status</th>
+              <th scope="col">Title</th>
+              <th scope="col">Category</th>
+              <th scope="col">Updated</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of todos(); track t.id) {
+              <tr>
+                <td>{{ t.status }}</td>
+                <td>{{ t.title }}</td>
+                <td>{{ t.category }}</td>
+                <td>{{ formatDate(t.updatedAt) }}</td>
+                <td>
+                  @if (t.status === 'cancelled') {
+                    <span class="mss-body-sm mss-text-muted">—</span>
+                  } @else {
+                    @if (t.status === 'open') {
+                      <button
+                        type="button"
+                        pButton
+                        class="p-button-text"
+                        [disabled]="mutatingId() === t.id"
+                        (click)="setTodoStatus(t.id, 'done')"
+                      >
+                        <span class="p-button-label">Done</span>
+                      </button>
+                    }
+                    @if (t.status === 'done') {
+                      <button
+                        type="button"
+                        pButton
+                        class="p-button-text"
+                        [disabled]="mutatingId() === t.id"
+                        (click)="setTodoStatus(t.id, 'open')"
+                      >
+                        <span class="p-button-label">Reopen</span>
+                      </button>
+                    }
+                    <button
+                      type="button"
+                      pButton
+                      class="p-button-text"
+                      [disabled]="mutatingId() === t.id"
+                      (click)="removeTodo(t.id)"
+                    >
+                      <span class="p-button-label">Remove</span>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,264 @@
+<div class="dashboard__content dashboard-form-page dashboard-form-page--change">
+  <div class="dashboard-page-atmosphere" aria-hidden="true">
+    <div class="dashboard-page-atmosphere__grid"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--sky"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--violet"></div>
+  </div>
+
+  <div class="dashboard__page-intro">
+    <p class="mss-eyebrow">Client onboarding</p>
+    <h2 class="mss-h3">Tell us what you want in the first design previews</h2>
+    <p class="dashboard__summary mss-body mss-text-secondary">
+      Goals, audience, what you sell, who you compete with, and which pages matter most—plain language is perfect. We
+      follow up if anything is unclear.
+    </p>
+  </div>
+
+  <div class="dashboard-form-page__layout">
+    <form
+      class="dashboard-card dashboard-card--hairline dashboard-form"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      novalidate
+    >
+      <header>
+        <h3 class="mss-h4">Design planning</h3>
+        <p>Save a draft on this device anytime. Submit when you are ready for us to review.</p>
+      </header>
+
+      @if (errorMessage()) {
+        <p class="dashboard-form__banner-error" role="alert">{{ errorMessage() }}</p>
+      }
+
+      @if (submitted()) {
+        <div class="dashboard-form__success" role="status">
+          <span class="dashboard-form__success-icon" aria-hidden="true">
+            <i class="pi pi-check"></i>
+          </span>
+          <span>We received your design plan. We will confirm the next step by email.</span>
+        </div>
+      }
+
+      <div class="design-planning-stepper" [attr.aria-busy]="submitting() ? 'true' : 'false'">
+        <nav class="design-planning-stepper__track" aria-label="Design planning steps">
+          <ol class="design-planning-stepper__list">
+            @for (step of briefSteps; track step.id; let i = $index) {
+              <li
+                class="design-planning-stepper__item"
+                [class.design-planning-stepper__item--done]="stepVisualState(i) === 'done'"
+                [class.design-planning-stepper__item--current]="stepVisualState(i) === 'current'"
+                [class.design-planning-stepper__item--upcoming]="stepVisualState(i) === 'upcoming'"
+                [attr.aria-current]="stepVisualState(i) === 'current' ? 'step' : null"
+              >
+                @if (canJumpToStep(i)) {
+                  <button type="button" class="design-planning-stepper__hit" (click)="goToStep(i)">
+                    <span class="design-planning-stepper__index" aria-hidden="true">
+                      @if (stepVisualState(i) === 'done') {
+                        <i class="pi pi-check"></i>
+                      } @else {
+                        {{ i + 1 }}
+                      }
+                    </span>
+                    <span class="design-planning-stepper__label">{{ step.title }}</span>
+                    <span class="design-planning-stepper__hint mss-text-muted">{{ step.summary }}</span>
+                  </button>
+                } @else {
+                  <div class="design-planning-stepper__hit design-planning-stepper__hit--static">
+                    <span class="design-planning-stepper__index" aria-hidden="true">
+                      @if (stepVisualState(i) === 'done') {
+                        <i class="pi pi-check"></i>
+                      } @else {
+                        {{ i + 1 }}
+                      }
+                    </span>
+                    <span class="design-planning-stepper__label">{{ step.title }}</span>
+                    <span class="design-planning-stepper__hint mss-text-muted">{{ step.summary }}</span>
+                  </div>
+                }
+              </li>
+            }
+          </ol>
+        </nav>
+
+        @if (currentStep() === 0) {
+          <div class="design-planning-stepper__panel" role="region" [attr.aria-labelledby]="'design-planning-panel-0'">
+            <h4 class="design-planning-stepper__panel-title mss-h4" id="design-planning-panel-0">{{ briefSteps[0].title }}</h4>
+            <label
+              class="dashboard-form__field"
+              [class.dashboard-form__field--invalid]="isInvalid('projectName')"
+            >
+              <span>Project working title</span>
+              <input
+                type="text"
+                formControlName="projectName"
+                autocomplete="organization"
+                placeholder="Example: Main Street Cafe redesign"
+              />
+              @if (isInvalid('projectName')) {
+                <p class="dashboard-form__error">{{ errorFor('projectName') }}</p>
+              }
+            </label>
+
+            <label
+              class="dashboard-form__field"
+              [class.dashboard-form__field--invalid]="isInvalid('primaryGoal')"
+            >
+              <span>What is the main outcome you want?</span>
+              <select formControlName="primaryGoal">
+                <option>Launch a new site</option>
+                <option>Refresh the look and feel</option>
+                <option>Add key pages or sections</option>
+                <option>Something else we should talk through</option>
+              </select>
+              @if (isInvalid('primaryGoal')) {
+                <p class="dashboard-form__error">{{ errorFor('primaryGoal') }}</p>
+              }
+            </label>
+          </div>
+        }
+
+        @if (currentStep() === 1) {
+          <div class="design-planning-stepper__panel" role="region" [attr.aria-labelledby]="'design-planning-panel-1'">
+            <h4 class="design-planning-stepper__panel-title mss-h4" id="design-planning-panel-1">{{ briefSteps[1].title }}</h4>
+            <label class="dashboard-form__field" [class.dashboard-form__field--invalid]="isInvalid('audience')">
+              <span>Who visits today, and what should they do next?</span>
+              <textarea
+                formControlName="audience"
+                rows="5"
+                placeholder="Example: local families booking a table; they should see hours, menu, and a clear way to call or book online."
+              ></textarea>
+              @if (isInvalid('audience')) {
+                <p class="dashboard-form__error">{{ errorFor('audience') }}</p>
+              }
+            </label>
+
+            <label class="dashboard-form__field" [class.dashboard-form__field--invalid]="isInvalid('mustHavePages')">
+              <span>Which pages or sections must show up in the first design previews?</span>
+              <textarea
+                formControlName="mustHavePages"
+                rows="5"
+                placeholder="Example: homepage, services, contact, one case study page."
+              ></textarea>
+              @if (isInvalid('mustHavePages')) {
+                <p class="dashboard-form__error">{{ errorFor('mustHavePages') }}</p>
+              }
+            </label>
+          </div>
+        }
+
+        @if (currentStep() === 2) {
+          <div class="design-planning-stepper__panel" role="region" [attr.aria-labelledby]="'design-planning-panel-2'">
+            <h4 class="design-planning-stepper__panel-title mss-h4" id="design-planning-panel-2">{{ briefSteps[2].title }}</h4>
+            <label class="dashboard-form__field">
+              <span>Brand notes (optional)</span>
+              <textarea
+                formControlName="brandNotes"
+                rows="3"
+                placeholder="Logo use, colors you want to keep or avoid, tone of voice."
+              ></textarea>
+            </label>
+
+            <label class="dashboard-form__field">
+              <span>Examples you like (optional)</span>
+              <textarea
+                formControlName="references"
+                rows="3"
+                placeholder="Links or names of sites that feel close to what you want."
+              ></textarea>
+            </label>
+
+            <label class="dashboard-form__field" [class.dashboard-form__field--invalid]="isInvalid('deadline')">
+              <span>When do you need the first design preview pass?</span>
+              <select formControlName="deadline">
+                <option>Flexible</option>
+                <option>Within two weeks</option>
+                <option>As soon as you can</option>
+              </select>
+              @if (isInvalid('deadline')) {
+                <p class="dashboard-form__error">{{ errorFor('deadline') }}</p>
+              }
+            </label>
+          </div>
+        }
+
+        @if (!submitted()) {
+          <div class="design-planning-stepper__footer">
+            @if (currentStep() > 0) {
+              <p-button
+                type="button"
+                label="Back"
+                icon="pi pi-arrow-left"
+                styleClass="mss-btn-ghost"
+                [rounded]="true"
+                [disabled]="form.disabled || submitting()"
+                (click)="goPrevStep()"
+              />
+            }
+            <div class="design-planning-stepper__footer-spacer"></div>
+            @if (!isLastStep()) {
+              <p-button
+                type="button"
+                label="Continue"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                size="large"
+                styleClass="mss-btn-primary"
+                [rounded]="true"
+                [disabled]="form.disabled || submitting()"
+                (click)="goNextStep()"
+              />
+            } @else {
+              <p-button
+                type="submit"
+                label="Submit plan"
+                icon="pi pi-send"
+                size="large"
+                styleClass="mss-btn-primary"
+                [rounded]="true"
+                [loading]="submitting()"
+                [disabled]="submitting() || form.disabled"
+              />
+            }
+          </div>
+        }
+      </div>
+
+      <div class="dashboard-form__actions-row">
+        <button type="button" class="dashboard-form__text-button" (click)="clearDraftWithConfirm()">
+          Clear saved draft
+        </button>
+        <button type="button" class="dashboard-form__text-button" (click)="printSummary()">Print summary</button>
+      </div>
+
+      <div class="dashboard-form__submit">
+        @if (submitted()) {
+          <p-button
+            type="button"
+            label="Start another plan"
+            icon="pi pi-refresh"
+            size="large"
+            styleClass="mss-btn-ghost"
+            [rounded]="true"
+            (click)="prepareAnother()"
+          />
+        }
+      </div>
+    </form>
+
+    <aside
+      class="dashboard-card dashboard-card--hairline dashboard-help"
+      aria-labelledby="design-planning-help-heading"
+    >
+      <h3 id="design-planning-help-heading" class="mss-h4">Quick tips</h3>
+      <div class="dashboard-help__list">
+        @for (card of coachCards; track card.id) {
+          <article>
+            <span class="dashboard-help__dot" aria-hidden="true"></span>
+            <h4>{{ card.title }}</h4>
+            <p>{{ card.description }}</p>
+          </article>
+        }
+      </div>
+    </aside>
+  </div>
+</div>

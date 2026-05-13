@@ -5,6 +5,7 @@ import { Home } from './home/home';
 import { ProcessPageComponent } from './process/process-page';
 import { SolutionsPageComponent } from './solutions/solutions-page';
 import { redirectToDashboardIfLoggedInGuard } from './shared/guards/redirect-to-dashboard-if-logged-in.guard';
+import { requireAdminGuard } from './shared/guards/require-admin.guard';
 import { requireAuthGuard } from './shared/guards/require-auth.guard';
 
 // Public marketing routes stay eager; portal routes are loaded only when clients need them.
@@ -68,6 +69,54 @@ export const routes: Routes = [
         data: {
           portalTitle: 'My Documents',
           portalGreeting: 'Your files are ready when you need them.',
+        },
+      },
+      {
+        path: 'todos',
+        loadComponent: () =>
+          import('./dashboard/todos/dashboard-todos-page').then((m) => m.DashboardTodosPageComponent),
+        title: 'Your tasks — Mustard Seed Solutions',
+        data: {
+          portalTitle: 'Todos',
+          portalGreeting: 'What we still need from you, and what you have already finished.',
+        },
+      },
+      {
+        path: 'onboarding/design-planning-brief',
+        loadComponent: () =>
+          import('./dashboard/mock-planning-brief/dashboard-mock-planning-brief-page').then(
+            (m) => m.DashboardMockPlanningBriefPageComponent,
+          ),
+        title: 'Design planning — Mustard Seed Solutions',
+        data: {
+          portalTitle: 'Design planning',
+          portalGreeting: 'Help us understand what you want to see before we design your pages.',
+        },
+      },
+      {
+        path: 'admin/client-todos',
+        canActivate: [requireAdminGuard],
+        loadComponent: () =>
+          import('./dashboard/admin-client-todos/dashboard-admin-client-todos-page').then(
+            (m) => m.DashboardAdminClientTodosPageComponent,
+          ),
+        title: 'Client tasks — Mustard Seed Solutions',
+        data: {
+          portalTitle: 'Client tasks',
+          portalGreeting: 'Look up a client by email and manage the tasks they see on Todos.',
+        },
+      },
+      {
+        path: 'admin/design-planning-briefs',
+        canActivate: [requireAdminGuard],
+        loadComponent: () =>
+          import('./dashboard/admin-mock-briefs/dashboard-admin-mock-briefs-page').then(
+            (m) => m.DashboardAdminMockBriefsPageComponent,
+          ),
+        title: 'Submitted design plans — Mustard Seed Solutions',
+        data: {
+          portalTitle: 'Submitted design plans',
+          portalGreeting: 'Review what clients sent from Design planning.',
         },
       },
       {

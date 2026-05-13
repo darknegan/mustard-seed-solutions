@@ -69,33 +69,45 @@ export const OVERVIEW_STATS_EMPTY: readonly DashboardOverviewStatSeed[] = [
 ];
 
 export interface DashboardOverviewActivitySeed {
+  readonly id: string;
   readonly title: string;
   readonly time: string;
   readonly description: string;
-  readonly accent: 'sky' | 'orange' | 'success' | 'muted';
+  readonly accent: 'sky' | 'orange' | 'success' | 'muted' | 'violet';
 }
 
 /** Example activity timeline — keep for mocks and Storybook-style previews. */
 export const OVERVIEW_ACTIVITIES_SEEDED_EXAMPLE: readonly DashboardOverviewActivitySeed[] = [
   {
+    id: 'design-planning',
+    title: 'Design planning on file',
+    time: 'Yesterday',
+    description: 'Your goals, audience, and must-have pages are saved for the design pass.',
+    accent: 'violet',
+  },
+  {
+    id: 'home-approved',
     title: 'Homepage sections approved',
     time: '2 days ago',
     description: 'Hero, About, and contact sections reviewed and signed off.',
     accent: 'sky',
   },
   {
+    id: 'change-req',
     title: 'Change request submitted',
     time: '5 days ago',
     description: 'Updated bio text and a new staff photo are queued for review.',
     accent: 'orange',
   },
   {
+    id: 'live',
     title: 'Site went live',
     time: '2 weeks ago',
     description: 'Your site is live and showing up in search results.',
     accent: 'success',
   },
   {
+    id: 'ssl',
     title: 'Secure connection turned on',
     time: '3 weeks ago',
     description: 'Your web address now opens with a secure connection.',

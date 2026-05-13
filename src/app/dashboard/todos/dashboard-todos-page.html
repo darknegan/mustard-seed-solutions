@@ -1,0 +1,183 @@
+<div class="dashboard__content dashboard-todos">
+  <div class="dashboard-page-atmosphere" aria-hidden="true">
+    <div class="dashboard-page-atmosphere__grid"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--sky"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--violet"></div>
+  </div>
+
+  <div class="dashboard__page-intro">
+    <p class="mss-eyebrow">Tasks</p>
+    <h2 class="mss-h3">Your task dashboard</h2>
+    <p class="dashboard__summary mss-body mss-text-secondary">
+      Open items come from our team and a short checklist tied to your account (including Design planning when it applies).
+      Finished items stay on the right for your records.
+    </p>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="dashboard-form__banner-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <div class="dashboard-todos__loading" aria-busy="true">
+      <span class="dashboard-todos__loading-icon" aria-hidden="true">
+        <i class="pi pi-spinner"></i>
+      </span>
+      <p class="mss-body mss-text-secondary">Loading your tasks…</p>
+    </div>
+  } @else {
+    <dl class="dashboard__stats" aria-label="Task summary">
+      <article class="dashboard-card dashboard-card--hairline dashboard-stat" data-accent="sky">
+        <div class="dashboard-stat__row">
+          <dt class="dashboard-stat__label">Open</dt>
+          @if (openCount() > 0) {
+            <span class="dashboard-stat__badge" data-status="warn">Needs you</span>
+          } @else {
+            <span class="dashboard-stat__badge" data-status="success">Caught up</span>
+          }
+        </div>
+        <dd class="dashboard-stat__value">{{ openCount() }}</dd>
+        <dd class="dashboard-stat__caption">Waiting on your action or a next step</dd>
+      </article>
+
+      <article class="dashboard-card dashboard-card--hairline dashboard-stat" data-accent="violet">
+        <div class="dashboard-stat__row">
+          <dt class="dashboard-stat__label">Done</dt>
+        </div>
+        <dd class="dashboard-stat__value">{{ completedCount() }}</dd>
+        <dd class="dashboard-stat__caption">Completed tasks we still show for your peace of mind</dd>
+      </article>
+
+      <article class="dashboard-card dashboard-card--hairline dashboard-stat" [attr.data-accent]="nextDueStat().accent">
+        <div class="dashboard-stat__row">
+          <dt class="dashboard-stat__label">Next date</dt>
+        </div>
+        <dd class="dashboard-stat__value">{{ nextDueStat().value }}</dd>
+        <dd class="dashboard-stat__caption">{{ nextDueStat().caption }}</dd>
+      </article>
+    </dl>
+
+    <div class="dashboard__divider" aria-hidden="true"></div>
+
+    <div class="dashboard-todos__panels">
+      <article
+        class="dashboard-card dashboard-card--hairline dashboard-todos-panel"
+        aria-labelledby="todos-active-heading"
+      >
+        <header class="dashboard-todos-panel__header">
+          <div>
+            <h3 id="todos-active-heading" class="dashboard-todos-panel__title">Active tasks</h3>
+            <p class="dashboard-todos-panel__subtitle">What to do next, in one place.</p>
+          </div>
+        </header>
+
+        <div class="dashboard-todos-panel__body">
+          @if (!openTodos().length) {
+            <div class="dashboard-empty dashboard-todos-empty" role="status">
+              <span class="dashboard-empty__icon" aria-hidden="true">
+                <i class="pi pi-check-circle"></i>
+              </span>
+              <h4>You are caught up</h4>
+              <p>When we add something new, it will show up here.</p>
+            </div>
+          } @else {
+            <ul class="dashboard-todos__list">
+              @for (todo of openTodos(); track todo.id) {
+                <li
+                  class="dashboard-todos-card"
+                  [attr.data-accent]="todoRowAccent(todo)"
+                  [class.dashboard-todos-card--virtual]="isVirtualId(todo.id)"
+                >
+                  <span class="dashboard-todos-card__rail" aria-hidden="true"></span>
+                  <div class="dashboard-todos-card__main">
+                    <div class="dashboard-todos-card__top">
+                      @if (showCategoryChip(todo.category)) {
+                        <span class="dashboard-todos-card__chip">{{ categoryLabel(todo.category) }}</span>
+                      }
+                      @if (formatDue(todo.dueAt)) {
+                        <span class="dashboard-todos-card__due">Due {{ formatDue(todo.dueAt) }}</span>
+                      }
+                    </div>
+                    <p class="dashboard-todos-card__title">{{ todo.title }}</p>
+                    @if (hasDescription(todo)) {
+                      <p class="dashboard-todos-card__desc mss-body-sm mss-text-secondary">{{ todo.description }}</p>
+                    }
+                  </div>
+                  <div class="dashboard-todos-card__actions">
+                    @if (todo.actionRoute) {
+                      <a class="dashboard-todos-card__cta" [routerLink]="todo.actionRoute">Open next step</a>
+                    }
+                    @if (!isVirtualId(todo.id)) {
+                      <button
+                        type="button"
+                        pButton
+                        class="p-button-sm p-button-outlined"
+                        [disabled]="mutatingId() === todo.id"
+                        (click)="markDone(todo)"
+                      >
+                        <span class="p-button-label">Mark done</span>
+                      </button>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </article>
+
+      <article
+        class="dashboard-card dashboard-card--hairline dashboard-todos-panel dashboard-todos-panel--done"
+        aria-labelledby="todos-done-heading"
+      >
+        <header class="dashboard-todos-panel__header">
+          <div>
+            <h3 id="todos-done-heading" class="dashboard-todos-panel__title">Completed</h3>
+            <p class="dashboard-todos-panel__subtitle">A short history of what you already finished.</p>
+          </div>
+        </header>
+
+        <div class="dashboard-todos-panel__body dashboard-todos-panel__body--scroll">
+          @if (!completedTodos().length) {
+            <div class="dashboard-empty dashboard-todos-empty" role="status">
+              <span class="dashboard-empty__icon" aria-hidden="true">
+                <i class="pi pi-inbox"></i>
+              </span>
+              <h4>Nothing here yet</h4>
+              <p>When you mark a task done, it moves into this list.</p>
+            </div>
+          } @else {
+            <ul class="dashboard-todos__list dashboard-todos__list--compact">
+              @for (todo of completedTodos(); track todo.id) {
+                <li class="dashboard-todos-card dashboard-todos-card--done">
+                  <span class="dashboard-todos-card__rail dashboard-todos-card__rail--muted" aria-hidden="true"></span>
+                  <div class="dashboard-todos-card__main">
+                    <p class="dashboard-todos-card__title">{{ todo.title }}</p>
+                    @if (formatCompleted(todo.completedAt)) {
+                      <p class="dashboard-todos-card__meta mss-body-sm mss-text-muted">
+                        Completed {{ formatCompleted(todo.completedAt) }}
+                      </p>
+                    }
+                  </div>
+                  <div class="dashboard-todos-card__actions">
+                    @if (!isVirtualId(todo.id)) {
+                      <button
+                        type="button"
+                        pButton
+                        class="p-button-sm p-button-text"
+                        [disabled]="mutatingId() === todo.id"
+                        (click)="markOpen(todo)"
+                      >
+                        <span class="p-button-label">Undo</span>
+                      </button>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </article>
+    </div>
+  }
+</div>

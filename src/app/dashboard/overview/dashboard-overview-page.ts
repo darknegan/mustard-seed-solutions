@@ -24,10 +24,11 @@ interface DashboardStat {
 }
 
 interface ActivityItem {
+  readonly id: string;
   readonly title: string;
   readonly time: string;
   readonly description: string;
-  readonly accent: 'sky' | 'orange' | 'success' | 'muted';
+  readonly accent: 'sky' | 'orange' | 'success' | 'muted' | 'violet';
 }
 
 interface QuickAction {
@@ -51,6 +52,7 @@ function mapStat(seed: DashboardOverviewStatSeed): DashboardStat {
 
 function mapActivity(seed: DashboardOverviewActivitySeed): ActivityItem {
   return {
+    id: seed.id,
     title: seed.title,
     time: seed.time,
     description: seed.description,
@@ -97,6 +99,13 @@ export class DashboardOverviewPageComponent {
   );
 
   protected readonly quickActions: readonly QuickAction[] = [
+    {
+      label: 'Your tasks',
+      description: 'See open steps (including Design planning) in one place.',
+      accent: 'violet',
+      icon: 'pi pi-check-square',
+      route: '/dashboard/todos',
+    },
     {
       label: 'Request a change',
       description: 'Send us a quick site update.',

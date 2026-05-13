@@ -1,0 +1,50 @@
+<div class="dashboard__content dashboard-form-page dashboard-form-page--change">
+  <div class="dashboard-page-atmosphere" aria-hidden="true">
+    <div class="dashboard-page-atmosphere__grid"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--sky"></div>
+    <div class="dashboard-page-atmosphere__glow dashboard-page-atmosphere__glow--violet"></div>
+  </div>
+
+  <div class="dashboard__page-intro">
+    <p class="mss-eyebrow">Admin</p>
+    <h2 class="mss-h3">Submitted design plans</h2>
+    <p class="dashboard__summary mss-body mss-text-secondary">
+      Newest first. Open a row in your database tool for full text if you need to copy long answers.
+    </p>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="dashboard-form__banner-error" role="alert">{{ errorMessage() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="mss-body mss-text-secondary">Loading…</p>
+  } @else if (!briefs().length) {
+    <p class="mss-body mss-text-secondary">No design plans submitted yet.</p>
+  } @else {
+    <div class="dashboard-admin-briefs">
+      <table class="dashboard-admin-briefs__table">
+        <thead>
+          <tr>
+            <th scope="col">Submitted</th>
+            <th scope="col">Client</th>
+            <th scope="col">Project title</th>
+            <th scope="col">Goal</th>
+            <th scope="col">Timing</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (b of briefs(); track b.id) {
+            <tr>
+              <td>{{ formatDate(b.createdAt) }}</td>
+              <td>{{ b.clientEmail }}</td>
+              <td>{{ b.projectName }}</td>
+              <td>{{ b.primaryGoal }}</td>
+              <td>{{ b.deadline }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

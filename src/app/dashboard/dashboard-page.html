@@ -19,17 +19,21 @@
 
     <nav class="dashboard__nav" aria-label="Dashboard">
       <p class="dashboard__nav-label">Menu</p>
-      @for (item of navItems; track item.route) {
+      @for (item of navItems(); track item.route) {
         <a
           class="dashboard__nav-link"
           [routerLink]="item.route"
           routerLinkActive="is-active"
           [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+          [attr.aria-label]="navAriaLabel(item)"
         >
           <span class="dashboard__nav-icon" aria-hidden="true">
             <i [class]="item.icon"></i>
           </span>
-          <span>{{ item.label }}</span>
+          <span class="dashboard__nav-text">{{ item.label }}</span>
+          @if (item.todoBadge && todoNavBadgeText()) {
+            <span class="dashboard__nav-badge" aria-hidden="true">{{ todoNavBadgeText() }}</span>
+          }
         </a>
       }
     </nav>
@@ -84,18 +88,22 @@
       role="dialog"
       aria-label="Dashboard menu"
     >
-      @for (item of navItems; track item.route) {
+      @for (item of navItems(); track item.route) {
         <a
           class="dashboard__mobile-menu-link"
           [routerLink]="item.route"
           routerLinkActive="is-active"
           [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+          [attr.aria-label]="navAriaLabel(item)"
           (click)="closeMobileMenu()"
         >
           <span class="dashboard__nav-icon" aria-hidden="true">
             <i [class]="item.icon"></i>
           </span>
-          <span>{{ item.label }}</span>
+          <span class="dashboard__nav-text">{{ item.label }}</span>
+          @if (item.todoBadge && todoNavBadgeText()) {
+            <span class="dashboard__nav-badge" aria-hidden="true">{{ todoNavBadgeText() }}</span>
+          }
         </a>
       }
       <button
@@ -134,14 +142,20 @@
   </main>
 
   <nav class="dashboard__tabbar" aria-label="Dashboard tabs">
-    @for (item of navItems; track item.route) {
+    @for (item of navItems(); track item.route) {
       <a
         [routerLink]="item.route"
         routerLinkActive="is-active"
         [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+        [attr.aria-label]="navAriaLabel(item)"
       >
-        <span class="dashboard__tab-icon" aria-hidden="true">
-          <i [class]="item.icon"></i>
+        <span class="dashboard__tab-icon-wrap">
+          <span class="dashboard__tab-icon" aria-hidden="true">
+            <i [class]="item.icon"></i>
+          </span>
+          @if (item.todoBadge && todoNavBadgeText()) {
+            <span class="dashboard__tab-badge" aria-hidden="true">{{ todoNavBadgeText() }}</span>
+          }
         </span>
         <small>{{ item.shortLabel }}</small>
       </a>
